@@ -31,3 +31,6 @@ build/
 .vscode/
 
 .env
+
+nginx/cert/music01.key
+nginx/cert/music01.pem
