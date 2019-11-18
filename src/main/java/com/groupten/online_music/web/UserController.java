@@ -1,5 +1,6 @@
 package com.groupten.online_music.web;
 
+import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.service.impl.IUserService;
 import io.swagger.annotations.Api;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(tags = "用户操作相关接口", description = "提供用户相关的 Rest API")
+@Api(tags = "用户操作相关接口")
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -19,9 +20,15 @@ public class UserController {
 
     @ApiOperation("用户登录接口")
     @GetMapping("/login")
-    public String login(@RequestBody User user){
-        if(userService.login(user))
-            return "登录成功";
-        return "登录失败";
+    public ResponseEntity login(@RequestBody User user) {
+        boolean result = userService.login(user);
+        return ResponseEntity.ofSuccess(result).message(result?"登录成功":"登录失败");
+    }
+
+    @ApiOperation("用户注册接口")
+    @GetMapping("/register")
+    public ResponseEntity register(@RequestBody User user) {
+        boolean result = userService.register(user);
+        return ResponseEntity.ofSuccess(result).message(result?"注册成功":"注册失败");
     }
 }

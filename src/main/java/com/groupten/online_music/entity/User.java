@@ -18,6 +18,26 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType user_type;
     private Date user_createTime;
+    @Column(nullable = true)
+    public String headIcon;
+    @Column(nullable = true, length = 150)
+    public String description;
+
+    public String getHeadIcon() {
+        return headIcon;
+    }
+
+    public void setHeadIcon(String headIcon) {
+        this.headIcon = headIcon;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getUser_id() {
         return user_id;
