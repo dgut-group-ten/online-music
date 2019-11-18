@@ -3,6 +3,8 @@
 
 ## 如何团队项目保持同步(重要)
 
+([附上IDEA可视化操作](https://blog.csdn.net/autfish/article/details/52513465))
+
 第一次时需要,与团队仓库建立联系
 
 ```shell script
@@ -15,3 +17,16 @@ git remote add upstream https://github.com/dgut-group-ten/online-music.git
 git fetch upstream
 git merge upstream/master
 ```
+
+-  提交代码到自己存库中
+```text
+git add .
+git commit -m "提交说明（自己编写）"
+git push
+```
+
+> 注意：提交代码到自己存库之后，还需要到github上面进行pull request操作  
+pull request 是为了把自己仓库的代码推送到远程分支中
+
+
+## **Api文档**(http://localhost:8081/swagger-ui.html)

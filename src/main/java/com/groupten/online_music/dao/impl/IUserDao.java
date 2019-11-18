@@ -1,7 +1,8 @@
 package com.groupten.online_music.dao.impl;
 
-import com.groupten.onlinemusic.entity.User;
+import com.groupten.online_music.entity.User;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +11,8 @@ import java.io.Serializable;
 @Repository
 public interface IUserDao
         extends JpaSpecificationExecutor<User>, PagingAndSortingRepository<User, Integer> {
+    @Query(value = "from User u where u.user_name = ?1")
+    public User findByUserName(String target);
 //    JpaSpecificationExecutor接口内提供功能如下：
 //    Optional<T> findOne(@Nullable Specification<T> var1);
 //    List<T> findAll(@Nullable Specification<T> var1);

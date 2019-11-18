@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://music-01.niracler.com:3306/music_db?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: root
+    password: dgutdev#
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
