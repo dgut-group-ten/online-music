@@ -7,9 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "用户操作相关接口")
 @Controller
@@ -20,14 +18,16 @@ public class UserController {
 
     @ApiOperation("用户登录接口")
     @GetMapping("/login")
-    public ResponseEntity login(@RequestBody User user) {
+    public @ResponseBody ResponseEntity login(@RequestBody User user) {
         boolean result = userService.login(user);
+        System.out.println("user:" +user);
+        System.out.println("result:" +result);
         return ResponseEntity.ofSuccess(result).message(result?"登录成功":"登录失败");
     }
 
     @ApiOperation("用户注册接口")
-    @GetMapping("/register")
-    public ResponseEntity register(@RequestBody User user) {
+    @PostMapping("/register")
+    public @ResponseBody ResponseEntity register(@RequestBody User user) {
         boolean result = userService.register(user);
         return ResponseEntity.ofSuccess(result).message(result?"注册成功":"注册失败");
     }

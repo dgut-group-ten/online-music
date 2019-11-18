@@ -24,7 +24,7 @@ public class UserService implements IUserService {
 
     @Transactional
     public boolean register(User user) {
-        if(!hasUser(user)) {
+        if(hasUser(user)) {
            return false;
         }
 
