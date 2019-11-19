@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -34,8 +35,26 @@ public class UserService implements IUserService {
         return null != userDao.save(user);
     }
 
+
     @Override
     public boolean hasUser(User user) {
         return null != userDao.findByUserName(user.getUser_name());
+    }
+
+    @Transactional
+    public boolean deleteUser(int id) {
+        User target = userDao.findById(id).get();
+        userDao.delete(target);
+        return true;
+    }
+
+    @Override
+    public User findById(int id) {
+        return userDao.findById(id).get();
+    }
+
+    @Transactional
+    public void save(User target) {
+        userDao.save(target);
     }
 }
