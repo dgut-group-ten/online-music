@@ -19,14 +19,23 @@ public class User {
     private UserType user_type;
     private Date user_createTime;
     @Column(nullable = true)
-    public String headIcon;
+    private String headIcon;
     @Column(nullable = true, length = 150)
-    public String description;
+    private String description;
+    @Column(length = 40)
+    private String Email;
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
+    }
 
     public String getHeadIcon() {
         return headIcon;
     }
-
     public void setHeadIcon(String headIcon) {
         this.headIcon = headIcon;
     }

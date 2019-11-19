@@ -6,4 +6,8 @@ public interface IUserService {
     public boolean login(User user);
     public boolean register(User user);
     public boolean hasUser(User user);
+    public boolean deleteUser(int id);
+    User findById(int id);
+
+    void save(User target);
 }
