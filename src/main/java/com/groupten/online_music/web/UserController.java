@@ -35,10 +35,10 @@ public class UserController {
         return ResponseEntity.ofSuccess(result).message(result ? "登录成功" : "登录失败");
     }
 
-    @ApiOperation("用户注册接口")
+    //@ApiOperation("用户注册接口")
     @PostMapping("/register")
     public @ResponseBody
-    ResponseEntity register(@RequestBody @ApiParam(name = "userDTO", value = "只需传入user_name, user_password，, Email数据", type = "body")
+    ResponseEntity register(@RequestBody //@ApiParam(name = "userDTO", value = "只需传入user_name, user_password，, Email数据", type = "body")
                                     UserDTO userDTO) {
         User user = new User(userDTO.getUser_name(), userDTO.getUser_password(), userDTO.getEmail());
         //1.通过邮箱发送验证码
