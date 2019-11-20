@@ -4,14 +4,14 @@ import com.groupten.online_music.common.utils.ApplicationException;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.service.impl.IUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @Api(tags = "用户操作相关接口")
 @Controller
@@ -20,16 +20,19 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @ApiOperation("用户登录接口")
+    @ApiOperation(value = "用户登录接口")
     @GetMapping("/login")
-    public @ResponseBody ResponseEntity login(@RequestBody User user, HttpServletResponse response) {
+    public @ResponseBody ResponseEntity login(@RequestParam("userName") @ApiParam(name="userName",value="拼接url传参",required=true) String userName,
+                                              @RequestParam("password") @ApiParam(name="password",value="拼接url传参",required=true) String password, HttpServletResponse response) {
+        User user = new User(userName, password);
         boolean result = userService.login(user);
         String token = "";
         if (result){//验证成功生成token
             token = userService.getToken(user);
             response.setHeader("Authorization", token);
         }
-        return ResponseEntity.ofSuccess(result).message(result?"登录成功":"登录失败");
+        System.out.println(userName+password);
+        return ResponseEntity.ofSuccess(true).message(true?"登录成功":"登录失败");
     }
 
     @ApiOperation("用户注册接口")

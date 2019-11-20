@@ -25,6 +25,13 @@ public class User {
     @Column(length = 40)
     private String Email;
 
+    public User(){}
+
+    public User(String userName, String password) {
+        this.user_name = userName;
+        this.user_password = password;
+    }
+
     public String getEmail() {
         return Email;
     }
