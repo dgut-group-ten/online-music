@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Api(tags = "用户操作相关接口")
 @Controller
 @RequestMapping("/user")
@@ -20,18 +22,23 @@ public class UserController {
 
     @ApiOperation("用户登录接口")
     @GetMapping("/login")
-    public @ResponseBody ResponseEntity login(@RequestBody User user) {
+    public @ResponseBody ResponseEntity login(@RequestBody User user, HttpServletResponse response) {
         boolean result = userService.login(user);
-        System.out.println("user:" +user);
-        System.out.println("result:" +result);
+        String token = "";
+        if (result){//验证成功生成token
+            token = userService.getToken(user);
+            response.setHeader("Authorization", token);
+        }
         return ResponseEntity.ofSuccess(result).message(result?"登录成功":"登录失败");
     }
-
 
     @ApiOperation("用户注册接口")
     @PostMapping("/register")
     public @ResponseBody ResponseEntity register(@RequestBody User user) {
+        //1.通过邮箱发送验证码
+        //2.验证注册信息-验证码校验，是否重名用户，密码加密后封装信息存入数据库
         boolean result = userService.register(user);
+
         return ResponseEntity.ofSuccess(result).message(result?"注册成功":"注册失败");
     }
 

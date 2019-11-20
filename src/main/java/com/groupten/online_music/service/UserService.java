@@ -1,5 +1,7 @@
 package com.groupten.online_music.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.UserStatus;
@@ -17,16 +19,22 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private IUserDao userDao;
+
     @Override
     public boolean login(User user) {
+        boolean result = false;
         User rs = userDao.findByUserName(user.getUser_name());
-        return user.getUser_password().equals(rs.getUser_password());
+        if (rs != null) {//存在用户，匹配密码
+            result = user.getUser_password().equals(rs.getUser_password());
+            user.setUser_id(rs.getUser_id());
+        }
+        return result;
     }
 
     @Transactional
     public boolean register(User user) {
-        if(hasUser(user)) {
-           return false;
+        if (hasUser(user)) {
+            return false;
         }
 
         user.setUser_status(UserStatus.ENABLE);
@@ -56,5 +64,17 @@ public class UserService implements IUserService {
     @Transactional
     public void save(User target) {
         userDao.save(target);
+    }
+
+    /**
+     * @param user 包装生成token的数据
+     * @return 返回生成的token
+     */
+    @Override
+    public String getToken(User user) {
+        String token = "";
+        token = JWT.create().withAudience(user.getUser_id() + "")
+                .sign(Algorithm.HMAC256(user.getUser_password()));
+        return token;
     }
 }

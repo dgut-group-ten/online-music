@@ -8,6 +8,7 @@ public interface IUserService {
     public boolean hasUser(User user);
     public boolean deleteUser(int id);
     User findById(int id);
-
     void save(User target);
+
+    public String getToken(User user);//生成token并返回
 }
