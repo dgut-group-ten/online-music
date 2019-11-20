@@ -12,5 +12,17 @@ services:
     ports:
       - "3306:3306"
 
+  web:
+    build: .
+    container_name: music_web
+    restart: always
+
+  nginx:
+    build: ./nginx
+    container_name: music_nginx
+    ports:
+      - "8081:8081"
+    restart: always
+
 volumes:
   data:
