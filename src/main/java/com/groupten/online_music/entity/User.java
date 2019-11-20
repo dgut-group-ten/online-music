@@ -1,5 +1,7 @@
 package com.groupten.online_music.entity;
 
+import com.groupten.online_music.common.dto.UserDTO;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -24,6 +26,27 @@ public class User {
     private String description;
     @Column(length = 40)
     private String Email;
+
+    public User(){}
+
+    public User(UserDTO userDTO) {
+        this.user_name = userDTO.getUser_name();
+        this.user_password = userDTO.getUser_password();
+        this.headIcon = userDTO.getHeadIcon();
+        this.description = userDTO.getDescription();
+        this.Email = userDTO.getEmail();
+    }
+
+    public User(String userName, String password) {
+        this.user_name = userName;
+        this.user_password = password;
+    }
+
+    public User(String user_name, String user_password, String email) {
+        this.user_name = user_name;
+        this.user_password = user_password;
+        this.Email = email;
+    }
 
     public String getEmail() {
         return Email;

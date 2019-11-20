@@ -19,7 +19,8 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private IUserDao userDao;
-
+//    @Autowired
+//    private MailService mailService;
     @Override
     public boolean login(User user) {
         boolean result = false;
@@ -33,14 +34,22 @@ public class UserService implements IUserService {
 
     @Transactional
     public boolean register(User user) {
+        //1.是否存在重名用户
         if (hasUser(user)) {
             return false;
         }
-
-        user.setUser_status(UserStatus.ENABLE);
+        //2.发送激活邮件
+//        mailService.sendSimpleMail(
+//                user.getEmail(),
+//                "来自在线音乐平台的验证邮件",
+//
+//        );
+        //3.存入用户信息，将用户状态设为DISABLE，等待用户激活
+        //user.setUser_status(UserStatus.DISABLE);
         user.setUser_type(UserType.NORMAL);
         user.setUser_createTime(new Date());
-        return null != userDao.save(user);
+
+        return null!=userDao.save(user);
     }
 
 
