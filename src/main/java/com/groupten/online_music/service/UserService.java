@@ -12,15 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService implements IUserService {
     @Autowired
     private IUserDao userDao;
-//    @Autowired
-//    private MailService mailService;
+
     @Override
     public boolean login(User user) {
         boolean result = false;
@@ -38,14 +36,8 @@ public class UserService implements IUserService {
         if (hasUser(user)) {
             return false;
         }
-        //2.发送激活邮件
-//        mailService.sendSimpleMail(
-//                user.getEmail(),
-//                "来自在线音乐平台的验证邮件",
-//
-//        );
-        //3.存入用户信息，将用户状态设为DISABLE，等待用户激活
-        //user.setUser_status(UserStatus.DISABLE);
+        //2.存入用户信息
+        user.setUser_status(UserStatus.ENABLE);
         user.setUser_type(UserType.NORMAL);
         user.setUser_createTime(new Date());
 
@@ -70,20 +62,13 @@ public class UserService implements IUserService {
         return userDao.findById(id).get();
     }
 
-    @Transactional
-    public void save(User target) {
-        userDao.save(target);
+    @Override
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email);
     }
 
-    /**
-     * @param user 包装生成token的数据
-     * @return 返回生成的token
-     */
-    @Override
-    public String getToken(User user) {
-        String token = "";
-        token = JWT.create().withAudience(user.getUser_id() + "")
-                .sign(Algorithm.HMAC256(user.getUser_password()));
-        return token;
+    @Transactional
+    public User save(User target) {
+        return userDao.save(target);
     }
 }
