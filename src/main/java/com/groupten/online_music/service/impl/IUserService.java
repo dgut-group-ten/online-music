@@ -6,9 +6,7 @@ public interface IUserService {
     public boolean login(User user);
     public boolean register(User user);
     public boolean hasUser(User user);
-    public boolean deleteUser(int id);
-    User findById(int id);
-    void save(User target);
-
-    public String getToken(User user);//生成token并返回
+    public User findById(int id);
+    public User findByEmail(String email);
+    public User save(User target);
 }

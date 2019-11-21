@@ -10,14 +10,6 @@ public class ResponseEntity<T> implements Serializable {
     private String message;
     private T data;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public int getStatus() {
         return status;
     }
@@ -34,6 +26,14 @@ public class ResponseEntity<T> implements Serializable {
         this.success = success;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public T getData() {
         return data;
     }
@@ -43,27 +43,6 @@ public class ResponseEntity<T> implements Serializable {
     }
 
     public ResponseEntity() {
-    }
-
-    public ResponseEntity(boolean success) {
-        this.success = success;
-    }
-
-    public ResponseEntity(T data) {
-        this.data = data;
-    }
-
-    public ResponseEntity(int status) {
-        this.status = status;
-    }
-
-    public ResponseEntity(T data, HttpStatus status) {
-        this.data = data;
-        this.status = status.value();
-    }
-
-    public static ResponseEntity ofSuccess(boolean s) {
-        return new ResponseEntity(s);
     }
 
     public ResponseEntity success(boolean success) {

@@ -1,15 +1,17 @@
 package com.groupten.online_music.web;
 
-import com.groupten.online_music.common.dto.UserDTO;
-import com.groupten.online_music.common.utils.ApplicationException;
+import com.groupten.online_music.common.jwt.JWTUtils;
+import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.service.impl.IUserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Api(tags = "用户操作相关接口")
@@ -20,61 +22,77 @@ public class UserController {
     private IUserService userService;
 
     @ApiOperation(value = "用户登录接口")
-    @PostMapping("/login")
+    @PostMapping("/token")
     public @ResponseBody
-    ResponseEntity login(@RequestBody @ApiParam(name = "userDTO", value = "只需传入user_name, user_password数据", type = "body")
-                                 UserDTO userDTO, HttpServletResponse response) {
-        User user = new User(userDTO.getUser_name(), userDTO.getUser_password());
+    ResponseEntity login(
+            @RequestBody @ApiParam(name = "userDTO", value = "登录只需传入user_name, user_password", type = "body") UserDTO userDTO,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        //userDTO的数据封装到user里
+        User user = new User(userDTO);
+        //响应结果
+        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = userService.login(user);
-        String token = "";
         if (result) {//验证成功生成token
-            token = userService.getToken(user);
-            response.setHeader("Authorization", token);
+            System.out.println(user);
+            response.setHeader("Authorization", JWTUtils.createToken(user));
         }
 
-        return ResponseEntity.ofSuccess(result).message(result ? "登录成功" : "登录失败");
+        return responseEntity.success(result)
+                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(result ? "请求成功" : "请求失败");
     }
 
-    @ApiOperation("用户注册接口")
-    @PostMapping("/register")
+    @ApiOperation(value = "用户注册接口")
+    @PostMapping
     public @ResponseBody
-    ResponseEntity register(@RequestBody @ApiParam(name = "userDTO", value = "只需传入user_name, user_password，, Email数据", type = "body")
-                                    UserDTO userDTO) {
-        User user = new User(userDTO.getUser_name(), userDTO.getUser_password(), userDTO.getEmail());
-        //1.通过邮箱发送验证码
-        //2.验证注册信息-验证码校验，是否重名用户，密码加密后封装信息存入数据库
-        boolean result = userService.register(user);
-
-        return ResponseEntity.ofSuccess(result).message(result ? "注册成功" : "注册失败");
-    }
-
-    @ApiOperation("用户信息更改接口")
-    @PutMapping(value = "/{id}")
-    public ResponseEntity update(@PathVariable("id") int id, @RequestBody @ApiParam(name = "userDTO", value = "可修改user_name, headIcon, description参数", type = "body")
-            UserDTO userDTO) {
-        User source = new User();
-        source.setUser_name(userDTO.getUser_name());
-        source.setDescription(userDTO.getDescription());
-        source.setHeadIcon(userDTO.getHeadIcon());
-        try {
-            User target = userService.findById(id);
-            if (target != null) {
-                BeanUtils.copyProperties(source, target);
-                userService.save(target);//update
+    ResponseEntity register(
+            @RequestBody @ApiParam(name = "userDTO", value = "需传入user_name, user_password,email, checkCode参数", type = "body") UserDTO userDTO,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        //userDTO的数据封装到user里
+        User user = new User(userDTO);
+        //响应结果
+        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
+        boolean result = false;
+        String message = "";
+        //不存在该用户, 注册
+        if (!userService.hasUser(user)) {
+            //先检验验证码
+            String checkCode = (String) request.getSession().getAttribute(user.getEmail());
+            if (checkCode == null){
+                message += "验证邮箱错误!";
+            }else if((checkCode.equals(userDTO.getCheckCode()))) {
+                result = userService.register(user);
             } else {
-                userService.save(source);//save
+                message += "验证码错误!";
             }
-        } catch (ApplicationException ex) {
-            return ResponseEntity.ofSuccess(false).message("修改用户信息 error.");
         }
-        return ResponseEntity.ofSuccess(true).message("修改用户信息 Success.");
+        message += (result ? "请求成功" : "请求失败");
+        return responseEntity.success(result)
+                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(message);
     }
 
-    @ApiOperation("删除用户接口")
-    @DeleteMapping("/{id}")
-    public @ResponseBody
-    ResponseEntity delete(@PathVariable @ApiParam(name = "id", value = "传入用户id", type = "path") int id) {
-        boolean result = userService.deleteUser(id);
-        return ResponseEntity.ofSuccess(result).message(result ? "删除成功" : "删除失败");
+    @ApiOperation("用户信息更改接口(未测试)")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity update(@PathVariable("id") int id,
+                                 @RequestBody @ApiParam(name = "userDTO", value = "可修改user_name, headIcon, description参数", type = "body")
+                                         UserDTO userDTO) {
+        //userDTO的数据封装到user里
+        User source = new User(userDTO);
+        User target = userService.findById(id);
+        //响应结果
+        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
+        boolean result = false;
+
+        if (target != null) {
+            BeanUtils.copyProperties(source, target);
+            result = (null != userService.save(target));//update
+        }
+
+        return responseEntity.success(result)
+                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(result ? "用户信息更改请求成功" : "用户信息更改请求失败");
     }
 }

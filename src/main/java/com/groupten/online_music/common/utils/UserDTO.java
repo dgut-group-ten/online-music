@@ -1,21 +1,30 @@
-package com.groupten.online_music.common.dto;
+package com.groupten.online_music.common.utils;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 
 @ApiModel(value = "UserDto")
 public class UserDTO {
-    @ApiModelProperty(value = "用户名")
+    @ApiModelProperty(value = "用户名", example = "username")
     private String user_name;
-    @ApiModelProperty(value = "用户密码")
+    @ApiModelProperty(value = "用户密码", example = "password")
     private String user_password;
-    @ApiModelProperty(value = "头像链接")
+    @ApiModelProperty(value = "头像链接", example = "http://music-01.niracler.com/headIcon.jpg")
     private String headIcon;
-    @ApiModelProperty(value = "个人描述")
+    @ApiModelProperty(value = "个人描述", example = "who am I?")
     private String description;
-    @ApiModelProperty(value = "邮箱地址")
-    private String Email;
+    @ApiModelProperty(value = "邮箱地址", example = "xxxx@qq.com")
+    private String email;
+    @ApiModelProperty(value = "验证码", example = "123456")
+    private String checkCode;
+
+    public String getCheckCode() {
+        return checkCode;
+    }
+
+    public void setCheckCode(String checkCode) {
+        this.checkCode = checkCode;
+    }
 
     public String getUser_name() {
         return user_name;
@@ -50,10 +59,10 @@ public class UserDTO {
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 }
