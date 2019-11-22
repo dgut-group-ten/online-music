@@ -10,7 +10,7 @@ import java.util.Date;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer user_id;
+    private Integer uid;
     @Column(length = 33)
     private String user_name;
     @Column(length = 16)
@@ -28,6 +28,14 @@ public class User {
     private String email;
 
     public User(){}
+
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
+    }
 
     public User(UserDTO userDTO) {
         this.user_name = userDTO.getUser_name();
@@ -71,13 +79,6 @@ public class User {
         this.description = description;
     }
 
-    public Integer getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
 
     public String getUser_name() {
         return user_name;

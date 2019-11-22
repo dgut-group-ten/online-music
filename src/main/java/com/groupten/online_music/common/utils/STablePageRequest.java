@@ -2,8 +2,10 @@ package com.groupten.online_music.common.utils;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 @ApiModel(value = "STablePageRequest")
@@ -53,7 +55,8 @@ public class STablePageRequest {
         Direction direction = Direction.DESC;
         if (!this.sortOrder.equals("desc")) {
             direction = Direction.ASC;
-        }
-        return PageRequest.of(this.pageNo - 1, this.pageSize, direction, sortOrder);
+        };
+
+        return PageRequest.of(this.pageNo - 1, this.pageSize, Sort.by(direction, sortField));
     }
 }

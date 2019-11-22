@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-//@Api(tags = "用户管理相关接口")
+@Api(tags = "用户管理相关接口")
 @RestController
 @RequestMapping("/admin")
 public class UserManageController {
@@ -25,15 +25,16 @@ public class UserManageController {
         return null;
     }
 
-//    @ApiOperation(value = "用户分页查询接口")
-//    @ApiImplicitParams(
-//            @ApiImplicitParam(name = "tablePageRequest", value = "封装分页参数, 可接受Json格式或对象数据", required = true, paramType = "body", dataType="STablePageRequest")
-//    )
+    @ApiOperation(value = "用户分页查询接口")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "tablePageRequest", value = "封装分页参数, 可接受Json格式或对象数据", required = true, paramType = "body", dataType="STablePageRequest")
+    )
     @GetMapping
     public @ResponseBody ResponseEntity<Page<User>> FindAll(@RequestBody STablePageRequest tablePageRequest){
         ResponseEntity<Page<User>> responseEntity = new ResponseEntity<>();
-        Page<User> page = Page.empty(tablePageRequest.sTablePageable());
+        Page<User> page;
         try {
+            page = Page.empty(tablePageRequest.sTablePageable());
             page = userManageService.findAll( tablePageRequest.sTablePageable());
         } catch (ApplicationException ex) {
             return responseEntity.success(false).status(HttpStatus.BAD_REQUEST).message("分页查询失败");
@@ -42,10 +43,10 @@ public class UserManageController {
         return responseEntity.success(true).status(HttpStatus.OK).message("分页查询成功").data(page);
     }
 
-//    @ApiOperation("删除用户接口")
-//    @ApiImplicitParams(
-//            @ApiImplicitParam(name = "id", value = "传入用户id", required = true, paramType = "path", dataType="int")
-//    )
+    @ApiOperation("删除用户接口")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "id", value = "传入用户id", required = true, paramType = "path", dataType="int")
+    )
     @DeleteMapping("/{id}")
     public @ResponseBody
     ResponseEntity delete(@PathVariable int id) {

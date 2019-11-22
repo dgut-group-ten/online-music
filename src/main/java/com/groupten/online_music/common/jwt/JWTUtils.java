@@ -34,7 +34,7 @@ public class JWTUtils {
         //生成token
         String token = JWT.create()
                 .withHeader(map)
-                .withClaim("uid", user.getUser_id())
+                .withClaim("uid", user.getUid())
                 .withClaim("web", "groupten")
                 .withExpiresAt(expiresDate)//设置过期时间
                 .withIssuedAt(iaData)//设置签发时间
@@ -49,7 +49,7 @@ public class JWTUtils {
         try{
             jwt = verifier.verify(token);
         } catch (Exception e){
-            throw new RuntimeException("登录凭证已过去，请重新登录");
+            throw new RuntimeException("登录凭证已过期! 请重新登录");
         }
 
         return jwt.getClaims();

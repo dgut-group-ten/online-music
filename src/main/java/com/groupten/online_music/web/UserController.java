@@ -34,13 +34,12 @@ public class UserController {
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = userService.login(user);
         if (result) {//验证成功生成token
-            System.out.println(user);
             response.setHeader("Authorization", JWTUtils.createToken(user));
         }
 
         return responseEntity.success(result)
                 .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
-                .message(result ? "请求成功" : "请求失败");
+                .message(result ? "登录请求成功" : "不存在该用户! 登录请求失败");
     }
 
     @ApiOperation(value = "用户注册接口")
@@ -67,6 +66,8 @@ public class UserController {
             } else {
                 message += "验证码错误!";
             }
+        }else{
+            message += "已存在重名用户!";
         }
         message += (result ? "请求成功" : "请求失败");
         return responseEntity.success(result)
