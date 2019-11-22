@@ -31,4 +31,4 @@ pull request 是为了把自己仓库的代码推送到远程分支中
 
 ## **Api文档**
 
-(http://localhost:8081/swagger-ui.html)
+(https://music-01.niracler.com:8081)
