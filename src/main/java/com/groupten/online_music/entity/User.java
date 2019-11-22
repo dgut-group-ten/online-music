@@ -43,6 +43,9 @@ public class User {
         this.headIcon = userDTO.getHeadIcon();
         this.description = userDTO.getDescription();
         this.email = userDTO.getEmail();
+        this.user_status = userDTO.getUserStatus();
+        this.user_type = userDTO.getUserType();
+        this.user_createTime = userDTO.getCreateTime();
     }
 
     public User(String userName, String password) {

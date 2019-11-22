@@ -19,6 +19,13 @@ public class STablePageRequest {
     @ApiModelProperty(value = "升序或降序", example = "desc")
     private String sortOrder = "desc";
 
+    public STablePageRequest(int pageNo, int pageSize, String sortField, String sortOrder) {
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
+        this.sortField = sortField;
+        this.sortOrder = sortOrder;
+    }
+
     public int getPageNo() {
         return pageNo;
     }
