@@ -25,7 +25,7 @@ public class UserService implements IUserService {
         User rs = userDao.findByUserName(user.getUser_name());
         if (rs != null) {//存在用户，匹配密码
             result = user.getUser_password().equals(rs.getUser_password());
-            user.setUser_id(rs.getUser_id());
+            user.setUid(rs.getUid());
         }
         return result;
     }

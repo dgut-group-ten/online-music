@@ -34,7 +34,7 @@ public class UserManageService implements IUserManageService {
     @Transactional
     public boolean deleteById(int id) {
         userDao.deleteById(id);
-        return false;
+        return true;
     }
 
     /**
