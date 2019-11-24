@@ -4,6 +4,7 @@ import com.groupten.online_music.common.utils.UserDTO;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 @Entity
 @Table(name = "t_user")
@@ -28,6 +29,14 @@ public class User {
     private String email;
 
     public User(){}
+
+    public User(Map<String, String> userMap) {
+        this.user_name = userMap.get("user_name");
+        this.user_password = userMap.get("user_password");
+        this.headIcon = userMap.get("headIcon");
+        this.description = userMap.get("description");
+        this.email = userMap.get("email");
+    }
 
     public Integer getUid() {
         return uid;

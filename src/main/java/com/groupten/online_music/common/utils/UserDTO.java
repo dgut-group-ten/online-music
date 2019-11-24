@@ -1,5 +1,6 @@
 package com.groupten.online_music.common.utils;
 
+import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.UserStatus;
 import com.groupten.online_music.entity.UserType;
 import io.swagger.annotations.ApiModel;
@@ -98,5 +99,15 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    /**
+     * 将修改过的信息覆盖源信息
+     * @param userDTO 修改过的信息
+     * @param user 未修改过的信息
+     */
+    public static void copyProperties(UserDTO userDTO, User user){
+        user.setUser_name(user.getUser_name());
+        user.setDescription(userDTO.getDescription());
     }
 }
