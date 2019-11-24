@@ -27,10 +27,10 @@ public class UserController {
     @PostMapping("/token")
     public @ResponseBody
     ResponseEntity login(
-            @RequestBody @ApiParam(name = "userDTO", value = "登录只需传入user_name, user_password", type = "body") UserDTO userDTO,
+            @RequestParam Map<String, String> userMap,
             HttpServletResponse response) {
         //userDTO的数据封装到user里
-        User user = new User(userDTO);
+        User user = new User(userMap);
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = userService.login(user);
