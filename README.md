@@ -9,7 +9,7 @@ ssh root@music-01.niracler.com # 密码在石墨文档
 cd online-music/
 git pull 
 docker-compose build
-docker-compose up
+docker-compose up -d
 ```
 
 ## 如何团队项目保持同步(重要)
