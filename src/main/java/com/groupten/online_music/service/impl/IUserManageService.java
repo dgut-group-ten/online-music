@@ -6,8 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface IUserManageService {
-    public void save(User user);
+public interface IUserManageService extends IUserService {
     public boolean deleteById(int id);
     public User findById(int id);
     public List<User> findAll();

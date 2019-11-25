@@ -13,18 +13,9 @@ import java.util.List;
 
 @Service
 @Transactional
-public class UserManageService implements IUserManageService {
+public class UserManageService extends UserService implements IUserManageService {
     @Autowired
     IUserDao userDao;
-
-    /**
-     * 新增用户
-     * @param user 用户数据
-     */
-    @Transactional
-    public void save(User user) {
-        userDao.save(user);
-    }
 
     /**
      * 根据用户id删除用户

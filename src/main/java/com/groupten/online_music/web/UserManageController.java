@@ -12,26 +12,37 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "用户管理相关接口")
 @RestController
 @RequestMapping("/admin")
 public class UserManageController {
     @Autowired
-    IUserManageService userManageService;
+    private IUserManageService userManageService;
 
-    //@ApiOperation(value = "新增用户接口")
+    @ApiOperation(value = "新增用户接口")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "userDTO", value = "传入userDTO内部所有参数", required = true, paramType = "body", dataType="UserDTO")
+    )
     @PostMapping
-    public String save(@RequestBody UserDTO userDTO){
-        return null;
+    public ResponseEntity add(@RequestBody UserDTO userDTO){
+        User user = new User(userDTO);
+        ResponseEntity responseEntity = new ResponseEntity();
+        if(!userManageService.hasUser(user) && userManageService.findByEmail(user.getEmail())==null){
+            user = userManageService.save(user);
+        } else {
+            return responseEntity.status(HttpStatus.BAD_REQUEST).message("有重名用户或邮箱已注册");
+        }
+
+        return responseEntity.status(HttpStatus.OK).message("用户添加成功").data(user);
     }
 
     @ApiOperation(value = "用户分页查询接口")
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "tablePageRequest", value = "封装分页参数, 可接受Json格式或对象数据", required = true, paramType = "body", dataType="STablePageRequest")
-    )
     @GetMapping
-    public @ResponseBody ResponseEntity<Page<User>> FindAll(@RequestBody STablePageRequest tablePageRequest){
+    public @ResponseBody ResponseEntity<Page<User>> FindAll(@RequestParam int pageNo, @RequestParam int pageSize, @RequestParam String sortField, @RequestParam String sortOrder){
         ResponseEntity<Page<User>> responseEntity = new ResponseEntity<>();
+        STablePageRequest tablePageRequest = new STablePageRequest(pageNo, pageSize, sortField, sortOrder);
         Page<User> page;
         try {
             page = Page.empty(tablePageRequest.sTablePageable());
