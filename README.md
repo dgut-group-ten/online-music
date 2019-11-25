@@ -1,6 +1,17 @@
 # online_music
 实训第10小组，在线音乐平台
 
+## 更新服务端部署的操作
+
+```shell script
+ssh root@music-01.niracler.com # 密码在石墨文档
+
+cd online-music/
+git pull 
+docker-compose build
+docker-compose up
+```
+
 ## 如何团队项目保持同步(重要)
 
 ([附上IDEA可视化操作](https://blog.csdn.net/autfish/article/details/52513465))
