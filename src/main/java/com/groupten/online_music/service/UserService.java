@@ -2,6 +2,7 @@ package com.groupten.online_music.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.groupten.online_music.common.utils.EncryptionUtil;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.UserStatus;
@@ -19,15 +20,21 @@ public class UserService implements IUserService {
     @Autowired
     private IUserDao userDao;
 
+    /**
+     * 登录操作
+     * @param user 传入登录信息
+     * @return 返回登录结果
+     */
     @Override
-    public boolean login(User user) {
-        boolean result = false;
+    public int login(User user) {
         User rs = userDao.findByUserName(user.getUser_name());
-        if (rs != null) {//存在用户，匹配密码
-            result = user.getUser_password().equals(rs.getUser_password());
-            user.setUid(rs.getUid());
+        if (rs != null) {//存在用户，匹配密码，正确返回uid
+            if(EncryptionUtil.encryption(user.getUser_password()).equals(rs.getUser_password())) {
+                return rs.getUid();
+            }
         }
-        return result;
+
+        return -1;
     }
 
     @Transactional
@@ -40,6 +47,8 @@ public class UserService implements IUserService {
         user.setUser_status(UserStatus.ENABLE);
         user.setUser_type(UserType.NORMAL);
         user.setUser_createTime(new Date());
+        //3.为用户密码加密
+        user.setUser_password(EncryptionUtil.encryption(user.getUser_password()));
 
         return null!=userDao.save(user);
     }

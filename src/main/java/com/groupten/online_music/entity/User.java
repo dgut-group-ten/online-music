@@ -14,7 +14,7 @@ public class User {
     private Integer uid;
     @Column(length = 33)
     private String user_name;
-    @Column(length = 16)
+    @Column(length = 100)
     private String user_password;
     @Enumerated(EnumType.STRING)
     private UserStatus user_status;
