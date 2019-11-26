@@ -27,9 +27,9 @@ public class UserService implements IUserService {
      */
     @Override
     public int login(User user) {
-        User rs = userDao.findByUserName(user.getUser_name());
+        User rs = userDao.findByUserName(user.getName());
         if (rs != null) {//存在用户，匹配密码，正确返回uid
-            if(EncryptionUtil.encryption(user.getUser_password()).equals(rs.getUser_password())) {
+            if(EncryptionUtil.encryption(user.getPassword()).equals(rs.getPassword())) {
                 return rs.getUid();
             }
         }
@@ -44,11 +44,11 @@ public class UserService implements IUserService {
             return false;
         }
         //2.存入用户信息
-        user.setUser_status(UserStatus.ENABLE);
-        user.setUser_type(UserType.NORMAL);
-        user.setUser_createTime(new Date());
+        user.setStatus(UserStatus.ENABLE);
+        user.setType(UserType.NORMAL);
+        user.setCreated(new Date());
         //3.为用户密码加密
-        user.setUser_password(EncryptionUtil.encryption(user.getUser_password()));
+        user.setPassword(EncryptionUtil.encryption(user.getPassword()));
 
         return null!=userDao.save(user);
     }
@@ -56,7 +56,7 @@ public class UserService implements IUserService {
 
     @Override
     public boolean hasUser(User user) {
-        return null != userDao.findByUserName(user.getUser_name());
+        return null != userDao.findByUserName(user.getName());
     }
 
     @Transactional
