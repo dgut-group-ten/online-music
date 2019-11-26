@@ -8,62 +8,62 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import java.util.Map;
+
 @ApiModel(value = "STablePageRequest")
 public class STablePageRequest {
     @ApiModelProperty(value = "页码", example = "1")
-    private int pageNo = 1;
+    private int p = 1;
     @ApiModelProperty(value = "最大页面记录数", example = "10")
-    private int pageSize = 10;
-    @ApiModelProperty(value = "排序字段", example = "id")
-    private String sortField = "id";
-    @ApiModelProperty(value = "升序或降序", example = "desc")
-    private String sortOrder = "desc";
+    private int ps = 10;
+    @ApiModelProperty(value = "排序字段,+升序,-降序,默认uid降序", example = "-uid")
+    private String ordering = "-uid";
 
-    public STablePageRequest(int pageNo, int pageSize, String sortField, String sortOrder) {
-        this.pageNo = pageNo;
-        this.pageSize = pageSize;
-        this.sortField = sortField;
-        this.sortOrder = sortOrder;
+    public STablePageRequest(Map<String, String> pagingMap) {
+        String tP = pagingMap.get("p");
+        String tPs = pagingMap.get("ps");
+        String tOrdering = pagingMap.get("ordering");
+
+        if (tP != null) this.p = Integer.parseInt(tP);
+        if (tPs != null) this.ps = Integer.parseInt(tPs);
+        if (tOrdering != null) this.ordering = tOrdering;
     }
 
-    public int getPageNo() {
-        return pageNo;
+    public int getP() {
+        return p;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public void setP(int p) {
+        this.p = p;
     }
 
-    public String getSortField() {
-        return sortField;
+    public int getPs() {
+        return ps;
     }
 
-    public String getSortOrder() {
-        return sortOrder;
+    public void setPs(int ps) {
+        this.ps = ps;
     }
 
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
+    public String getOrdering() {
+        return ordering;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public void setSortField(String sortField) {
-        this.sortField = sortField;
-    }
-
-    public void setSortOrder(String sortOrder) {
-        this.sortOrder = sortOrder;
+    public void setOrdering(String ordering) {
+        this.ordering = ordering;
     }
 
     public Pageable sTablePageable() {
         Direction direction = Direction.DESC;
-        if (!this.sortOrder.equals("desc")) {
-            direction = Direction.ASC;
-        };
+        String sortOrder = this.ordering.substring(0, 1);
+        String sortField = this.ordering.substring(1);
 
-        return PageRequest.of(this.pageNo - 1, this.pageSize, Sort.by(direction, sortField));
+        if (!sortOrder.equals("-")) {
+            direction = Direction.ASC;
+        } else {
+            direction = Direction.DESC;
+        }
+
+        return PageRequest.of(this.p - 1, this.ps, Sort.by(direction, sortField));
     }
 }

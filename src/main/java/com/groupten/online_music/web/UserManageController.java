@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "用户管理相关接口")
 @RestController
@@ -40,9 +41,9 @@ public class UserManageController {
 
     @ApiOperation(value = "用户分页查询接口")
     @GetMapping
-    public @ResponseBody ResponseEntity<Page<User>> FindAll(@RequestParam int pageNo, @RequestParam int pageSize, @RequestParam String sortField, @RequestParam String sortOrder){
+    public @ResponseBody ResponseEntity<Page<User>> FindAll(@RequestParam Map<String, String> pagingMap){
         ResponseEntity<Page<User>> responseEntity = new ResponseEntity<>();
-        STablePageRequest tablePageRequest = new STablePageRequest(pageNo, pageSize, sortField, sortOrder);
+        STablePageRequest tablePageRequest = new STablePageRequest(pagingMap);
         Page<User> page;
         try {
             page = Page.empty(tablePageRequest.sTablePageable());
