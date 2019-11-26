@@ -78,7 +78,7 @@ public class UserController {
                 .message(message);
     }
 
-    @ApiOperation("用户信息更改接口")
+    @ApiOperation("用户信息更改接口(未改好)")
     @PutMapping("/{id}")
     @ResponseBody
     public ResponseEntity update(@RequestBody UserDTO userDTO, @PathVariable int id, HttpServletRequest request) {

@@ -13,14 +13,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer uid;
     @Column(length = 33)
-    private String user_name;
+    private String name;
     @Column(length = 100)
-    private String user_password;
+    private String password;
     @Enumerated(EnumType.STRING)
-    private UserStatus user_status;
+    private UserStatus status;
     @Enumerated(EnumType.STRING)
-    private UserType user_type;
-    private Date user_createTime;
+    private UserType type;
+    private Date created;
     @Column(nullable = true)
     private String headIcon;
     @Column(nullable = true, length = 150)
@@ -28,14 +28,26 @@ public class User {
     @Column(length = 40)
     private String email;
 
-    public User(){}
+    public User() {
+    }
 
     public User(Map<String, String> userMap) {
-        this.user_name = userMap.get("user_name");
-        this.user_password = userMap.get("user_password");
+        this.name = userMap.get("name");
+        this.password = userMap.get("password");
         this.headIcon = userMap.get("headIcon");
         this.description = userMap.get("description");
         this.email = userMap.get("email");
+    }
+
+    public User(UserDTO userDTO) {
+        this.name = userDTO.getName();
+        this.password = userDTO.getPassword();
+        this.headIcon = userDTO.getHeadIcon();
+        this.description = userDTO.getDescription();
+        this.email = userDTO.getEmail();
+        this.status = userDTO.getStatus();
+        this.type = userDTO.getType();
+        this.created = userDTO.getCreated();
     }
 
     public Integer getUid() {
@@ -46,39 +58,50 @@ public class User {
         this.uid = uid;
     }
 
-    public User(UserDTO userDTO) {
-        this.user_name = userDTO.getUser_name();
-        this.user_password = userDTO.getUser_password();
-        this.headIcon = userDTO.getHeadIcon();
-        this.description = userDTO.getDescription();
-        this.email = userDTO.getEmail();
-        this.user_status = userDTO.getUserStatus();
-        this.user_type = userDTO.getUserType();
-        this.user_createTime = userDTO.getCreateTime();
+    public String getName() {
+        return name;
     }
 
-    public User(String userName, String password) {
-        this.user_name = userName;
-        this.user_password = password;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public User(String user_name, String user_password, String email) {
-        this.user_name = user_name;
-        this.user_password = user_password;
-        this.email = email;
+    public String getPassword() {
+        return password;
     }
 
-    public String getEmail() {
-        return email;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public UserType getType() {
+        return type;
+    }
+
+    public void setType(UserType type) {
+        this.type = type;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     public String getHeadIcon() {
         return headIcon;
     }
+
     public void setHeadIcon(String headIcon) {
         this.headIcon = headIcon;
     }
@@ -91,44 +114,11 @@ public class User {
         this.description = description;
     }
 
-
-    public String getUser_name() {
-        return user_name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
-    }
-
-    public String getUser_password() {
-        return user_password;
-    }
-
-    public void setUser_password(String user_password) {
-        this.user_password = user_password;
-    }
-
-    public UserStatus getUser_status() {
-        return user_status;
-    }
-
-    public void setUser_status(UserStatus user_status) {
-        this.user_status = user_status;
-    }
-
-    public UserType getUser_type() {
-        return user_type;
-    }
-
-    public void setUser_type(UserType user_type) {
-        this.user_type = user_type;
-    }
-
-    public Date getUser_createTime() {
-        return user_createTime;
-    }
-
-    public void setUser_createTime(Date user_createTime) {
-        this.user_createTime = user_createTime;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
