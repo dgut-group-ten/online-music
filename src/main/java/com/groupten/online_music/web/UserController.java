@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 @Api(tags = "用户操作相关接口")
@@ -37,7 +38,7 @@ public class UserController {
         //userMap的数据封装到user里
         User user = new User(userMap);
         //响应结果
-        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
+        ResponseEntity responseEntity = new ResponseEntity<User>();
         boolean result = false;
         String token = null;
         //登录操作
@@ -47,8 +48,11 @@ public class UserController {
             token = JWTUtils.createToken(user);
         }
 
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("token", token);
+        data.put("name", userMap.get("name"));
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败")
-                .token(token);
+                .data(data);
     }
 
     @ApiOperation(value = "用户注册接口")
