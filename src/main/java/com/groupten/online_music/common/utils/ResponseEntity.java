@@ -8,10 +8,19 @@ public class ResponseEntity<T> implements Serializable {
     private int status;
     private boolean success = true;
     private String message;
+    private String token;
     private T data;
 
     public int getStatus() {
         return status;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setStatus(int status) {
@@ -62,6 +71,11 @@ public class ResponseEntity<T> implements Serializable {
 
     public ResponseEntity status(HttpStatus status) {
         this.setStatus(status.value());
+        return this;
+    }
+
+    public ResponseEntity token(String token) {
+        this.setToken(token);
         return this;
     }
 }

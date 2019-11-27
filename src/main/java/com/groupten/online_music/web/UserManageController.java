@@ -1,6 +1,5 @@
 package com.groupten.online_music.web;
 
-import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ApplicationException;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.common.utils.STablePageRequest;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Api(tags = "用户管理相关接口")
@@ -23,20 +21,17 @@ public class UserManageController {
     private IUserManageService userManageService;
 
     @ApiOperation(value = "新增用户接口")
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "userDTO", value = "传入userDTO内部所有参数", required = true, paramType = "body", dataType="UserDTO")
-    )
     @PostMapping
-    public ResponseEntity add(@RequestBody UserDTO userDTO){
-        User user = new User(userDTO);
-        ResponseEntity responseEntity = new ResponseEntity();
+    public ResponseEntity<User> add(@RequestParam Map<String, String> userMap){
+        User user = new User(userMap);
+        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         if(!userManageService.hasUser(user) && userManageService.findByEmail(user.getEmail())==null){
             user = userManageService.save(user);
         } else {
-            return responseEntity.status(HttpStatus.BAD_REQUEST).message("有重名用户或邮箱已注册");
+            return responseEntity.status(HttpStatus.BAD_REQUEST).message("有重名用户或邮箱已注册").data(null);
         }
 
-        return responseEntity.status(HttpStatus.OK).message("用户添加成功").data(user);
+        return responseEntity.status(HttpStatus.CREATED).message("用户添加成功").data(user);
     }
 
     @ApiOperation(value = "用户分页查询接口")
@@ -56,9 +51,6 @@ public class UserManageController {
     }
 
     @ApiOperation("删除用户接口")
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "id", value = "传入用户id", required = true, paramType = "path", dataType="int")
-    )
     @DeleteMapping("/{id}")
     public @ResponseBody
     ResponseEntity delete(@PathVariable int id) {
@@ -66,7 +58,7 @@ public class UserManageController {
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = userManageService.deleteById(id);
         return responseEntity.success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .status(result ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST)
                 .message(result ? "删除请求成功" : "删除请求失败");
     }
 }
