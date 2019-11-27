@@ -25,10 +25,11 @@ public class EmailController {
     private IUserService userService;
 
     @ApiOperation(value = "发送验证码")
-    @ApiImplicitParam(name = "to", value = "验证的邮箱地址", required = true, paramType = "path", dataType="String")
+    @ApiImplicitParam(name = "to", value = "验证的邮箱地址", required = true, paramType = "path", dataType = "String")
     @PostMapping
     public ResponseEntity sendCheckCode(@RequestParam String to, HttpServletRequest request) {
         String message = "";
+        boolean result = false;
         if (userService.findByEmail(to) == null) {
             String title = "来自在线音乐平台的验证邮件";
             String content = "验证码: ";
@@ -37,13 +38,16 @@ public class EmailController {
                 int num = (int) (Math.random() * 10);
                 checkCode = num + checkCode;
             }
-            mailService.sendSimpleMail(to, title, content + checkCode);
+            result = mailService.sendSimpleMail(to, title, content + checkCode);
             request.getSession().setAttribute(to, checkCode);
             message += "已发送验证码，请打开邮箱确认";
         } else {
             message += "邮箱已注册，请更换邮箱！";
         }
 
-        return new ResponseEntity().success(true).status(HttpStatus.OK).message(message);
+        return new ResponseEntity()
+                .success(result)
+                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(message);
     }
 }

@@ -34,16 +34,18 @@ public class UserController {
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = false;
+        String token = null;
         //登录操作
         int uid = userService.login(user);//登录失败返回-1
         if ((result = (uid != -1))) {//验证成功生成token
             user.setUid(uid);
-            response.setHeader("Authorization", JWTUtils.createToken(user));
+            token = JWTUtils.createToken(user);
         }
 
         return responseEntity.success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
-                .message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败");
+                .status(result ? HttpStatus.OK : HttpStatus.NOT_ACCEPTABLE)
+                .message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败")
+                .token(token);
     }
 
     @ApiOperation(value = "用户注册接口")
@@ -74,7 +76,7 @@ public class UserController {
         }
         message += (result ? "请求成功" : "请求失败");
         return responseEntity.success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .status(result ? HttpStatus.CREATED : HttpStatus.NOT_ACCEPTABLE)
                 .message(message);
     }
 
