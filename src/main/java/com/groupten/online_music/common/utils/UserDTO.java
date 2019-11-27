@@ -1,8 +1,8 @@
 package com.groupten.online_music.common.utils;
 
 import com.groupten.online_music.entity.User;
-import com.groupten.online_music.entity.UserStatus;
-import com.groupten.online_music.entity.UserType;
+import com.groupten.online_music.entity.entityEnum.UserStatus;
+import com.groupten.online_music.entity.entityEnum.UserType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

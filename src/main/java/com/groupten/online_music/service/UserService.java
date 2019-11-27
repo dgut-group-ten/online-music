@@ -1,12 +1,10 @@
 package com.groupten.online_music.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.groupten.online_music.common.utils.EncryptionUtil;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
-import com.groupten.online_music.entity.UserStatus;
-import com.groupten.online_music.entity.UserType;
+import com.groupten.online_music.entity.entityEnum.UserStatus;
+import com.groupten.online_music.entity.entityEnum.UserType;
 import com.groupten.online_music.service.impl.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

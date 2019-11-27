@@ -1,53 +1,57 @@
 package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.utils.ResponseEntity;
-import com.groupten.online_music.service.impl.IMailService;
+import com.groupten.online_music.entity.EmailConfirm;
+import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
+import com.groupten.online_music.service.impl.IEmailService;
 import com.groupten.online_music.service.impl.IUserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Api(tags = "邮箱验证相关接口")
 @RestController
 @RequestMapping("/email")
 public class EmailController {
+    static final String title = "来自在线音乐平台的验证邮件";
     @Autowired
-    private IMailService mailService;
+    private IEmailService emailService;
     @Autowired
     private IUserService userService;
 
     @ApiOperation(value = "发送验证码")
-    @ApiImplicitParam(name = "to", value = "验证的邮箱地址", required = true, paramType = "path", dataType = "String")
     @PostMapping
     public ResponseEntity sendCheckCode(@RequestParam String to, HttpServletRequest request) {
+        //1.查表
+        EmailConfirm emailConfirm = emailService.findOne(to);
+        //2.发送邮件
+        String checkCode = emailService.generateCheckCode();
         String message = "";
-        boolean result = false;
-        if (userService.findByEmail(to) == null) {
-            String title = "来自在线音乐平台的验证邮件";
-            String content = "验证码: ";
-            String checkCode = "";
-            for (int i = 0; i < 6; i++) {
-                int num = (int) (Math.random() * 10);
-                checkCode = num + checkCode;
-            }
-            result = mailService.sendSimpleMail(to, title, content + checkCode);
-            request.getSession().setAttribute(to, checkCode);
-            message += "已发送验证码，请打开邮箱确认";
-        } else {
+        if (emailConfirm == null) {
+            //2-1.邮箱不存在, 发送认证邮件后保存
+            emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
+            emailService.save(new EmailConfirm(to, checkCode, new Date(), ConfirmStatus.UNCONFIRMED));
+        } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
+            //2-2.邮箱存在, 已认证则不发送并提示信息
             message += "邮箱已注册，请更换邮箱！";
+        } else if(emailService.isLimitedTime(emailConfirm.getConfirmTime())){
+            //2-3.邮箱存在, 未认证则判断发送间隔, 更新验证信息后再发送
+            emailConfirm.setConfirmTime(new Date());
+            emailConfirm.setCheckCode(checkCode);
+            emailService.save(emailConfirm);
+            emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
+            message += "已发送验证码，请打开邮箱确认";
+        }else{
+            message += "验证码已发送，60秒后才可重发验证码";
         }
 
-        return new ResponseEntity()
-                .success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
-                .message(message);
+        return new ResponseEntity().message(message);
     }
 }
