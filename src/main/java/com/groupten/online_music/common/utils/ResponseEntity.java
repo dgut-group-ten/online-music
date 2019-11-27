@@ -5,15 +5,9 @@ import org.springframework.http.HttpStatus;
 import java.io.Serializable;
 
 public class ResponseEntity<T> implements Serializable {
-    private int status;
-    private boolean success = true;
     private String message;
     private String token;
     private T data;
-
-    public int getStatus() {
-        return status;
-    }
 
     public String getToken() {
         return token;
@@ -21,18 +15,6 @@ public class ResponseEntity<T> implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
     }
 
     public String getMessage() {
@@ -54,11 +36,6 @@ public class ResponseEntity<T> implements Serializable {
     public ResponseEntity() {
     }
 
-    public ResponseEntity success(boolean success) {
-        this.setSuccess(success);
-        return this;
-    }
-
     public ResponseEntity message(String data) {
         this.setMessage(data);
         return this;
@@ -66,11 +43,6 @@ public class ResponseEntity<T> implements Serializable {
 
     public ResponseEntity data(T data) {
         this.setData(data);
-        return this;
-    }
-
-    public ResponseEntity status(HttpStatus status) {
-        this.setStatus(status.value());
         return this;
     }
 

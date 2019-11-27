@@ -4,7 +4,10 @@ import com.groupten.online_music.common.jwt.JWTUtils;
 import com.groupten.online_music.common.utils.FileUploadUtil;
 import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ResponseEntity;
+import com.groupten.online_music.entity.EmailConfirm;
 import com.groupten.online_music.entity.User;
+import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
+import com.groupten.online_music.service.impl.IEmailService;
 import com.groupten.online_music.service.impl.IUserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private IEmailService emailService;
 
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/token")
@@ -29,7 +34,7 @@ public class UserController {
     ResponseEntity login(
             @RequestParam Map<String, String> userMap,
             HttpServletResponse response) {
-        //userDTO的数据封装到user里
+        //userMap的数据封装到user里
         User user = new User(userMap);
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
@@ -42,9 +47,7 @@ public class UserController {
             token = JWTUtils.createToken(user);
         }
 
-        return responseEntity.success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.NOT_ACCEPTABLE)
-                .message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败")
+        return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败")
                 .token(token);
     }
 
@@ -54,30 +57,28 @@ public class UserController {
     ResponseEntity register(
             @RequestParam Map<String, String> userMap,
             HttpServletRequest request) {
-        //userDTO的数据封装到user里
+        //1. userMap的数据封装到user里
         User user = new User(userMap);
-        //响应结果
+
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
-        boolean result = false;
-        String message = "";
-        //不存在该用户, 注册
+        StringBuffer message = new StringBuffer("");
+
+        //2. 不存在该用户, 注册
         if (!userService.hasUser(user)) {
-            //先检验验证码
-            String checkCode = (String) request.getSession().getAttribute(user.getEmail());
-            if (checkCode == null){
-                message += "验证邮箱错误!";
-            }else if((checkCode.equals(userMap.get("checkCode")))) {
-                result = userService.register(user);
-            } else {
-                message += "验证码错误!";
+            //2-1. 获取验证码信息
+            EmailConfirm emailConfirm = emailService.findOne(user.getEmail());
+            //2-2. 校验验证码，成功则注册用户
+            if (emailService.isCorrectCode(emailConfirm, userMap.get("checkCode"), message)) {
+                message.append(userService.register(user) ? "用户注册请求成功" : "用户注册请求失败");
+                //注册成功后标记认证邮箱
+                emailConfirm.setStatus(ConfirmStatus.CONFIRMED);
+                emailService.save(emailConfirm);
             }
-        }else{
-            message += "已存在重名用户!";
+        } else {
+            message.append("已存在重名用户!");
         }
-        message += (result ? "请求成功" : "请求失败");
-        return responseEntity.success(result)
-                .status(result ? HttpStatus.CREATED : HttpStatus.NOT_ACCEPTABLE)
-                .message(message);
+
+        return responseEntity.message(message.toString());
     }
 
     @ApiOperation("用户信息更改接口(未改好)")
@@ -96,8 +97,7 @@ public class UserController {
             result = (rs = userService.save(target)) != null;//update
         }
 
-        return responseEntity.success(result)
-                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+        return responseEntity
                 .message(result ? "用户信息更改请求成功" : "用户信息更改请求失败")
                 .data(rs);
     }

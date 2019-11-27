@@ -1,6 +1,8 @@
 package com.groupten.online_music.entity;
 
 import com.groupten.online_music.common.utils.UserDTO;
+import com.groupten.online_music.entity.entityEnum.UserStatus;
+import com.groupten.online_music.entity.entityEnum.UserType;
 
 import javax.persistence.*;
 import java.util.Date;

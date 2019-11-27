@@ -28,10 +28,10 @@ public class UserManageController {
         if(!userManageService.hasUser(user) && userManageService.findByEmail(user.getEmail())==null){
             user = userManageService.save(user);
         } else {
-            return responseEntity.status(HttpStatus.BAD_REQUEST).message("有重名用户或邮箱已注册").data(null);
+            return responseEntity.message("有重名用户或邮箱已注册").data(null);
         }
 
-        return responseEntity.status(HttpStatus.CREATED).message("用户添加成功").data(user);
+        return responseEntity.message("用户添加成功").data(user);
     }
 
     @ApiOperation(value = "用户分页查询接口")
@@ -44,10 +44,10 @@ public class UserManageController {
             page = Page.empty(tablePageRequest.sTablePageable());
             page = userManageService.findAll( tablePageRequest.sTablePageable());
         } catch (ApplicationException ex) {
-            return responseEntity.success(false).status(HttpStatus.BAD_REQUEST).message("分页查询失败");
+            return responseEntity.message("分页查询失败");
         }
 
-        return responseEntity.success(true).status(HttpStatus.OK).message("分页查询成功").data(page);
+        return responseEntity.message("分页查询成功").data(page);
     }
 
     @ApiOperation("删除用户接口")
@@ -57,8 +57,6 @@ public class UserManageController {
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         boolean result = userManageService.deleteById(id);
-        return responseEntity.success(result)
-                .status(result ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST)
-                .message(result ? "删除请求成功" : "删除请求失败");
+        return responseEntity.message(result ? "删除请求成功" : "删除请求失败");
     }
 }
