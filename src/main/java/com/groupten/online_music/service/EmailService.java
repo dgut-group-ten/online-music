@@ -1,7 +1,9 @@
 package com.groupten.online_music.service;
 
+import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.dao.impl.IEmailDao;
 import com.groupten.online_music.entity.EmailConfirm;
+import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
 import com.groupten.online_music.service.impl.IEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

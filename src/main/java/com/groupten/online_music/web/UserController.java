@@ -1,9 +1,10 @@
 package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.jwt.JWTUtils;
-import com.groupten.online_music.common.utils.FileUploadUtil;
 import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ResponseEntity;
+import com.groupten.online_music.common.utils.exception.ApplicationException;
+import com.groupten.online_music.common.utils.exception.AuthenticationException;
 import com.groupten.online_music.entity.EmailConfirm;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
@@ -13,7 +14,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,8 +31,8 @@ public class UserController {
 
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/token")
-    public @ResponseBody
-    ResponseEntity login(
+    @ResponseBody
+    public ResponseEntity login(
             @RequestParam Map<String, String> userMap,
             HttpServletResponse response) {
         //userMap的数据封装到user里
@@ -46,16 +46,18 @@ public class UserController {
         if ((result = (uid != -1))) {//验证成功生成token
             user.setUid(uid);
             token = JWTUtils.createToken(user);
+        } else {
+            throw new AuthenticationException("登录失败！请检查用户名与命名");
         }
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("token", token);
         data.put("name", userMap.get("name"));
-        return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败")
-                .data(data);
+        return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
     }
 
     @ApiOperation(value = "用户注册接口")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     public @ResponseBody
     ResponseEntity register(
@@ -77,9 +79,11 @@ public class UserController {
                 //注册成功后标记认证邮箱
                 emailConfirm.setStatus(ConfirmStatus.CONFIRMED);
                 emailService.save(emailConfirm);
+            }else{
+                throw new AuthenticationException("验证码错误! 请重新确认您的验证码");
             }
         } else {
-            message.append("已存在重名用户!");
+            throw new ApplicationException("已存在重名用户!");
         }
 
         return responseEntity.message(message.toString());

@@ -1,6 +1,7 @@
 package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.utils.ResponseEntity;
+import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.entity.EmailConfirm;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
 import com.groupten.online_music.service.impl.IEmailService;
@@ -28,20 +29,20 @@ public class EmailController {
 
     @ApiOperation(value = "发送验证码")
     @PostMapping
-    public ResponseEntity sendCheckCode(@RequestParam String to, HttpServletRequest request) {
+    public ResponseEntity sendCheckCode(@RequestParam String to) {
         //1.查表
         EmailConfirm emailConfirm = emailService.findOne(to);
         //2.发送邮件
-        String checkCode = emailService.generateCheckCode();
         String message = "";
+        String checkCode = emailService.generateCheckCode();//生成验证码
         if (emailConfirm == null) {
             //2-1.邮箱不存在, 发送认证邮件后保存
             emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
             emailService.save(new EmailConfirm(to, checkCode, new Date(), ConfirmStatus.UNCONFIRMED));
             message += "验证码已发送至您的邮箱！";
         } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
-            //2-2.邮箱存在, 已认证则不发送并提示信息
-            message += "邮箱已注册，请更换邮箱！";
+            //2-2.邮箱存在, 已认证则不发送并抛出异常提示信息给前端
+            throw new ApplicationException("邮箱已注册，请更换邮箱！");
         } else if(emailService.isLimitedTime(emailConfirm.getConfirmTime())){
             //2-3.邮箱存在, 未认证则判断发送间隔, 更新验证信息后再发送
             emailConfirm.setConfirmTime(new Date());

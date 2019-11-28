@@ -3,12 +3,12 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://music-01.niracler.com:3306/music_db?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    #url: jdbc:mysql://music-01.niracler.com:3306/music_db?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     username: root
-    password: dgutdev#
+    #password: dgutdev#
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://localhost:3306/music?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
-    #password: 123456
+    url: jdbc:mysql://localhost:3306/music?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    password: 123456
   jpa:
     database: mysql
     show-sql: true
