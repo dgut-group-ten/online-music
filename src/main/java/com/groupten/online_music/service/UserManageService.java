@@ -19,12 +19,12 @@ public class UserManageService extends UserService implements IUserManageService
 
     /**
      * 根据用户id删除用户
-     * @param id 用户id
+     * @param user 用户
      * @return
      */
     @Transactional
-    public boolean deleteById(int id) {
-        userDao.deleteById(id);
+    public boolean delete(User user) {
+        userDao.delete(user);
         return true;
     }
 
