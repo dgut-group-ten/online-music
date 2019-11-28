@@ -1,6 +1,6 @@
 package com.groupten.online_music.web;
 
-import com.groupten.online_music.common.utils.ApplicationException;
+import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.common.utils.STablePageRequest;
 import com.groupten.online_music.entity.EmailConfirm;
@@ -10,10 +10,10 @@ import com.groupten.online_music.service.impl.IUserManageService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Api(tags = "用户管理相关接口")
 @RestController
@@ -25,6 +25,7 @@ public class UserManageController {
     private IEmailService emailService;
 
     @ApiOperation(value = "新增用户接口")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity add(@RequestParam Map<String, String> userMap) {
         User user = new User(userMap);
@@ -53,8 +54,9 @@ public class UserManageController {
 
     @ApiOperation("删除用户接口")
     @DeleteMapping("/{id}")
-    public @ResponseBody
-    ResponseEntity delete(@PathVariable int id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public ResponseEntity delete(@PathVariable int id){
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         //删除操作
@@ -63,9 +65,9 @@ public class UserManageController {
         if (target != null) {
             userManageService.delete(target);
             EmailConfirm emailConfirm = emailService.findOne(target.getEmail());
-            if(emailConfirm != null) emailService.delete(emailConfirm);
+            if (emailConfirm != null) emailService.delete(emailConfirm);
         } else {
-            return responseEntity.message("删除请求失败！ 目标对象为null");
+            throw new ApplicationException("删除请求失败！ 目标对象为null");
         }
 
         return responseEntity.message("删除请求成功！");

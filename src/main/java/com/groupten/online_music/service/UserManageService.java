@@ -1,6 +1,5 @@
 package com.groupten.online_music.service;
 
-import com.groupten.online_music.common.utils.ApplicationException;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.service.impl.IUserManageService;
