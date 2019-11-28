@@ -38,6 +38,7 @@ public class EmailController {
             //2-1.邮箱不存在, 发送认证邮件后保存
             emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
             emailService.save(new EmailConfirm(to, checkCode, new Date(), ConfirmStatus.UNCONFIRMED));
+            message += "验证码已发送至您的邮箱！";
         } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
             //2-2.邮箱存在, 已认证则不发送并提示信息
             message += "邮箱已注册，请更换邮箱！";

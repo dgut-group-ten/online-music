@@ -150,4 +150,9 @@ public class EmailService implements IEmailService {
         message.append("验证码错误！请检查您的验证码！");
         return false;
     }
+
+    @Transactional
+    public void delete(EmailConfirm emailConfirm) {
+        emailDao.delete(emailConfirm);
+    }
 }
