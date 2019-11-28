@@ -63,7 +63,7 @@ public class UserManageController {
         if (target != null) {
             userManageService.delete(target);
             EmailConfirm emailConfirm = emailService.findOne(target.getEmail());
-            emailService.delete(emailConfirm);
+            if(emailConfirm != null) emailService.delete(emailConfirm);
         } else {
             return responseEntity.message("删除请求失败！ 目标对象为null");
         }
