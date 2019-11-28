@@ -1,5 +1,6 @@
 package com.groupten.online_music.service;
 
+import com.groupten.online_music.common.utils.ApplicationException;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.service.impl.IUserManageService;
@@ -26,16 +27,6 @@ public class UserManageService extends UserService implements IUserManageService
     public boolean delete(User user) {
         userDao.delete(user);
         return true;
-    }
-
-    /**
-     * 根据id查询用户
-     * @param id 查询id
-     * @return 返回用户数据
-     */
-    @Override
-    public User findById(int id) {
-        return userDao.findById(id).get();
     }
 
     /**

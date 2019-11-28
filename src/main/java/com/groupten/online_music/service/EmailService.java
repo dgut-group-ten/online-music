@@ -57,6 +57,7 @@ public class EmailService implements IEmailService {
      */
     @Override
     public EmailConfirm findOne(String email) {
+
         return emailDao.findByEmail(email);
     }
 

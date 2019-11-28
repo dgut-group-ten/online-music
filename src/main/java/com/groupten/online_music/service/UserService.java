@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,6 +21,7 @@ public class UserService implements IUserService {
 
     /**
      * 登录操作
+     *
      * @param user 传入登录信息
      * @return 返回登录结果
      */
@@ -27,7 +29,7 @@ public class UserService implements IUserService {
     public int login(User user) {
         User rs = userDao.findByUserName(user.getName());
         if (rs != null) {//存在用户，匹配密码，正确返回uid
-            if(rs.getPassword().equals(EncryptionUtil.encryption(user.getPassword()))) {
+            if (rs.getPassword().equals(EncryptionUtil.encryption(user.getPassword()))) {
                 return rs.getUid();
             }
         }
@@ -48,7 +50,7 @@ public class UserService implements IUserService {
         //3.为用户密码加密
         user.setPassword(EncryptionUtil.encryption(user.getPassword()));
 
-        return null!=userDao.save(user);
+        return null != userDao.save(user);
     }
 
 
@@ -57,16 +59,10 @@ public class UserService implements IUserService {
         return null != userDao.findByUserName(user.getName());
     }
 
-    @Transactional
-    public boolean deleteUser(int id) {
-        User target = userDao.findById(id).get();
-        userDao.delete(target);
-        return true;
-    }
-
     @Override
     public User findById(int id) {
-        return userDao.findById(id).get();
+        Optional<User> user = userDao.findById(id);
+        return user.orElse(null);
     }
 
     @Override
