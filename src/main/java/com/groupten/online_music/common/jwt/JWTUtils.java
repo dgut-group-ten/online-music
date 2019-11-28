@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JWTUtils {
-    public static String SECRET = "onlinemusic";
+    public static final String SECRET = "onlinemusic";
 
     /**
      * 生成token
@@ -25,7 +25,7 @@ public class JWTUtils {
         Date iaData = new Date();
         //过期时间-60分钟过期
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, 60);
+        now.add(Calendar.DAY_OF_WEEK, 7);
         Date expiresDate = now.getTime();
         //设置jwt header
         Map<String, Object> map = new HashMap<String, Object>();
