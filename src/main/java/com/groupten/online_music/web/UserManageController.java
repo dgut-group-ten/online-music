@@ -41,12 +41,11 @@ public class UserManageController {
 
     @ApiOperation(value = "用户分页查询接口")
     @GetMapping
-    public @ResponseBody
-    ResponseEntity FindAll(@RequestParam Map<String, String> pagingMap) {
+    @ResponseBody
+    public ResponseEntity FindAll(@RequestParam Map<String, String> pagingMap) {
         ResponseEntity<Page<User>> responseEntity = new ResponseEntity<>();
         STablePageRequest tablePageRequest = new STablePageRequest(pagingMap);
-        Page<User> page;
-        page = Page.empty(tablePageRequest.sTablePageable());
+        Page<User> page = Page.empty(tablePageRequest.sTablePageable());
         page = userManageService.findAll(tablePageRequest.sTablePageable());
 
         return responseEntity.message("分页查询成功").data(page);
@@ -56,7 +55,7 @@ public class UserManageController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public ResponseEntity delete(@PathVariable int id){
+    public ResponseEntity delete(@PathVariable int id) {
         //响应结果
         ResponseEntity<User> responseEntity = new ResponseEntity<User>();
         //删除操作
