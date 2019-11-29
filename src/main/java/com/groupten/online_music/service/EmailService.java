@@ -118,33 +118,39 @@ public class EmailService implements IEmailService {
 
     /**
      * 校验验证码
+     *
      * @param emailConfirm 邮箱验证信息
-     * @param checkCode 用户输入的验证码
-     * @param message 提示信息
+     * @param checkCode    用户输入的验证码
+     * @param message      提示信息
      * @return true or false
      */
     @Override
     public boolean isCorrectCode(EmailConfirm emailConfirm, String checkCode, StringBuffer message) {
         //判断有无该邮箱验证信息
-        if(emailConfirm == null){
+        if (emailConfirm == null) {
             message.append("验证邮箱错误!");
             System.out.println(message);
             return false;
         }
         //判断用户输入是否未空
-        if(checkCode == null){
+        if (checkCode == null) {
             message.append("验证码为空!");
             System.out.println(message);
             return false;
         }
+        //邮箱是否已认证
+        if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
+            message.append("邮箱已注册");
+            return false;
+        }
         //判断验证码是否过期
-        if(!isNotExpiredTime(emailConfirm.getConfirmTime())){
+        if (!isNotExpiredTime(emailConfirm.getConfirmTime())) {
             message.append("验证码已过期!请重新获取验证码");
             System.out.println(message);
             return false;
         }
         //匹配验证码
-        if (checkCode.equals(emailConfirm.getCheckCode())){
+        if (checkCode.equals(emailConfirm.getCheckCode())) {
             message.append("验证码正确！");
             System.out.println(message);
             return true;

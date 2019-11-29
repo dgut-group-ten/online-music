@@ -1,6 +1,7 @@
 package com.groupten.online_music.service;
 
 import com.groupten.online_music.common.utils.EncryptionUtil;
+import com.groupten.online_music.common.utils.FileUploadUtil;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.entityEnum.UserStatus;
@@ -9,8 +10,11 @@ import com.groupten.online_music.service.impl.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -73,5 +77,44 @@ public class UserService implements IUserService {
     @Transactional
     public User save(User target) {
         return userDao.save(target);
+    }
+
+    @Override
+    public Map<String, Object> getUserInfo(int uid) {
+        User user = findById(uid);
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        userInfo.put("name", user.getName());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("created", user.getCreated());
+        userInfo.put("status", user.getStatus());
+        userInfo.put("type", user.getType());
+        userInfo.put("description", user.getDescription());
+        userInfo.put("headIcon", user.getHeadIcon());
+
+        return userInfo;
+    }
+
+    /**
+     * 更换用户头像操作
+     * @param file 新头像
+     */
+    @Override
+    public String changeHeadIcon(MultipartFile file) {
+        String path =  FileUploadUtil.uploadFile(file);
+
+        if(path == null)
+            return null;
+
+        return path;
+    }
+
+    @Override
+    public void changeUserInfo(User target, Map<String, Object> userMap) {
+        //更换头像
+        String path = FileUploadUtil.uploadFile((MultipartFile) userMap.get("headIcon"));
+        if (path != null) target.setHeadIcon(path);
+        //更改其他信息
+        target.setName((String) userMap.get("name"));
+        target.setName((String) userMap.get("description"));
     }
 }

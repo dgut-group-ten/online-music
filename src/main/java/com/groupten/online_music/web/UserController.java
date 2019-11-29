@@ -1,6 +1,7 @@
 package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.jwt.JWTUtils;
+import com.groupten.online_music.common.utils.FileUploadUtil;
 import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.common.utils.exception.ApplicationException;
@@ -14,6 +15,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,37 +34,36 @@ public class UserController {
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/token")
     @ResponseBody
-    public ResponseEntity login(
-            @RequestParam Map<String, String> userMap,
-            HttpServletResponse response) {
+    public ResponseEntity login(@RequestParam Map<String, String> userMap) {
         //userMap的数据封装到user里
         User user = new User(userMap);
         //响应结果
         ResponseEntity responseEntity = new ResponseEntity<User>();
         boolean result = false;
         String token = null;
+//        System.out.println(userMap.toString());
+//        System.out.println("userMap.get(\"name\"):" + userMap.get("name"));
         //登录操作
         int uid = userService.login(user);//登录失败返回-1
         if ((result = (uid != -1))) {//验证成功生成token
             user.setUid(uid);
             token = JWTUtils.createToken(user);
         } else {
-            throw new AuthenticationException("登录失败！请检查用户名与命名");
+            throw new AuthenticationException("登录失败！请检查用户名与密码");
         }
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("token", token);
+        //data.put("uid", userMap.get("name"));
         data.put("name", userMap.get("name"));
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
     }
 
     @ApiOperation(value = "用户注册接口")
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    public @ResponseBody
-    ResponseEntity register(
-            @RequestParam Map<String, String> userMap,
-            HttpServletRequest request) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseBody
+    public ResponseEntity register(@RequestParam Map<String, String> userMap) {
         //1. userMap的数据封装到user里
         User user = new User(userMap);
 
@@ -79,7 +80,7 @@ public class UserController {
                 //注册成功后标记认证邮箱
                 emailConfirm.setStatus(ConfirmStatus.CONFIRMED);
                 emailService.save(emailConfirm);
-            }else{
+            } else {
                 throw new AuthenticationException("验证码错误! 请重新确认您的验证码");
             }
         } else {
@@ -89,45 +90,31 @@ public class UserController {
         return responseEntity.message(message.toString());
     }
 
-    @ApiOperation("用户信息更改接口(未改好)")
-    @PutMapping("/{id}")
+    @ApiOperation("获取一个用户信息")
+    @GetMapping
     @ResponseBody
-    public ResponseEntity update(@RequestBody UserDTO userDTO, @PathVariable int id, HttpServletRequest request) {
-        //查原有用户数据
-        User target = userService.findById(id);
-        User rs = null;
-        //响应结果
-        ResponseEntity<User> responseEntity = new ResponseEntity<User>();
-        boolean result = false;
+    public ResponseEntity getUserInfo(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
+        User user = userService.findById(target_id);
 
-        if (target != null) {
-            UserDTO.copyProperties(userDTO, target);
-            result = (rs = userService.save(target)) != null;//update
-        }
-
-        return responseEntity
-                .message(result ? "用户信息更改请求成功" : "用户信息更改请求失败")
-                .data(rs);
+        return new ResponseEntity().message("用户信息获取成功").data(user);
     }
 
-//    @ApiOperation("更换用户头像接口")
-//    @PutMapping("/{id}")
-//    @ResponseBody
-//    public ResponseEntity updateIcon(@RequestParam MultipartFile file, @PathVariable int id) {
-//        //查原有用户数据
-//        User target = new User();
-//        User rs = null;
-//        //响应结果
-//        ResponseEntity responseEntity = new ResponseEntity();
-//        boolean result = false;
-//        //上传头像
-//        target.setHeadIcon(FileUploadUtil.uploadFile(file));
-//        target.setUid(id);
-//        result = (rs = userService.save(target)) != null;//update
-//
-//        return responseEntity.success(result)
-//                .status(result ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
-//                .message(result ? "用户信息更改请求成功" : "用户信息更改请求失败")
-//                .data(rs);
-//    }
+    @ApiOperation("用户信息更改接口")
+    @PutMapping
+    @ResponseBody
+    public ResponseEntity update(@RequestParam Map<String, Object> userMap, HttpServletRequest request) {
+        //token验证，得到uid
+        String token = request.getHeader("token");
+        int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
+        //查原有用户数据
+        User target = userService.findById(target_id);
+        //修改用户信息
+        userService.changeUserInfo(target, userMap);
+        //保存已修改信息
+        User user = userService.save(target);
+
+        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
+    }
 }

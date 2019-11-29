@@ -34,7 +34,7 @@ public class User {
     }
 
     public User(Map<String, String> userMap) {
-        this.name = userMap.get("name");
+        this.name =  userMap.get("name");
         this.password = userMap.get("password");
         this.headIcon = userMap.get("headIcon");
         this.description = userMap.get("description");
