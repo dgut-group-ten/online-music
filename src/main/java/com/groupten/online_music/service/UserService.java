@@ -84,7 +84,7 @@ public class UserService implements IUserService {
         User user = findById(uid);
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("name", user.getName());
-        userInfo.put("email", user.getEmail());
+        //userInfo.put("email", user.getEmail());
         userInfo.put("created", user.getCreated());
         userInfo.put("status", user.getStatus());
         userInfo.put("type", user.getType());
@@ -96,13 +96,14 @@ public class UserService implements IUserService {
 
     /**
      * 更换用户头像操作
+     *
      * @param file 新头像
      */
     @Override
     public String changeHeadIcon(MultipartFile file) {
-        String path =  FileUploadUtil.uploadFile(file);
+        String path = FileUploadUtil.uploadFile(file);
 
-        if(path == null)
+        if (path == null)
             return null;
 
         return path;

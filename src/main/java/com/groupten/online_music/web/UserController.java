@@ -2,7 +2,6 @@ package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.jwt.JWTUtils;
 import com.groupten.online_music.common.utils.FileUploadUtil;
-import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.common.utils.ResponseEntity;
 import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.common.utils.exception.AuthenticationException;
@@ -16,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +53,7 @@ public class UserController {
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("token", token);
-        //data.put("uid", userMap.get("name"));
+        //data.put("uid", uid);
         data.put("name", userMap.get("name"));
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
     }
@@ -90,10 +89,18 @@ public class UserController {
         return responseEntity.message(message.toString());
     }
 
-    @ApiOperation("获取一个用户信息")
+    @ApiIgnore
+    @GetMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity getOneUserInfo(@PathVariable int id) {
+        Map<String, Object> userMap = userService.getUserInfo(id);
+        return new ResponseEntity().message("用户信息获取成功").data(userMap);
+    }
+
+    @ApiIgnore
     @GetMapping
     @ResponseBody
-    public ResponseEntity getUserInfo(HttpServletRequest request) {
+    public ResponseEntity getPersonalInfo(HttpServletRequest request) {
         String token = request.getHeader("token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         User user = userService.findById(target_id);
@@ -101,7 +108,7 @@ public class UserController {
         return new ResponseEntity().message("用户信息获取成功").data(user);
     }
 
-    @ApiOperation("用户信息更改接口")
+    @ApiIgnore
     @PutMapping
     @ResponseBody
     public ResponseEntity update(@RequestParam Map<String, Object> userMap, HttpServletRequest request) {
@@ -117,4 +124,19 @@ public class UserController {
 
         return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
     }
+
+//    @ApiIgnore
+//    @PutMapping("/{id}")
+//    @ResponseBody
+//    public ResponseEntity update(@RequestParam MultipartFile file, @PathVariable int id) {
+//        //查原有用户数据
+//        User target = userService.findById(id);
+//        //修改用户信息
+//        String path = FileUploadUtil.uploadFile(file);
+//        target.setHeadIcon(path);
+//        //保存已修改信息
+//        User user = userService.save(target);
+//
+//        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
+//    }
 }
