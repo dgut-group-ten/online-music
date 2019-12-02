@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.groupten.online_music.entity.User;
+import com.groupten.online_music.entity.entityEnum.UserType;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class JWTUtils {
         String token = JWT.create()
                 .withHeader(map)
                 .withClaim("uid", user.getUid())
+                .withClaim("isAdmin", user.getType() == UserType.ADMIN)
                 .withClaim("web", "groupten")
                 .withExpiresAt(expiresDate)//设置过期时间
                 .withIssuedAt(iaData)//设置签发时间
