@@ -3,11 +3,12 @@ package com.groupten.online_music.entity;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "t_email_confirm")
-public class EmailConfirm {
+public class EmailConfirm  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eid;
