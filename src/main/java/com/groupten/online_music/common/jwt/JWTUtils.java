@@ -24,7 +24,7 @@ public class JWTUtils {
     public static String createToken(User user) {
         //签发时间
         Date iaData = new Date();
-        //过期时间-60分钟过期
+        //过期时间-7天过期
         Calendar now = Calendar.getInstance();
         now.add(Calendar.DAY_OF_WEEK, 7);
         Date expiresDate = now.getTime();
@@ -36,6 +36,7 @@ public class JWTUtils {
         String token = JWT.create()
                 .withHeader(map)
                 .withClaim("uid", user.getUid())
+                .withClaim("name", user.getName())
                 .withClaim("isAdmin", user.getType() == UserType.ADMIN)
                 .withClaim("web", "groupten")
                 .withExpiresAt(expiresDate)//设置过期时间
