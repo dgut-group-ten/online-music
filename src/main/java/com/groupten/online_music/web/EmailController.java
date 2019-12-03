@@ -43,14 +43,14 @@ public class EmailController {
         } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
             //2-2.邮箱存在, 已认证则不发送并抛出异常提示信息给前端
             throw new ApplicationException("邮箱已注册，请更换邮箱！");
-        } else if(emailService.isLimitedTime(emailConfirm.getConfirmTime())){
+        } else if (emailService.isLimitedTime(emailConfirm.getConfirmTime())) {
             //2-3.邮箱存在, 未认证则判断发送间隔, 更新验证信息后再发送
             emailConfirm.setConfirmTime(new Date());
             emailConfirm.setCheckCode(checkCode);
             emailService.save(emailConfirm);
             emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
             message += "已发送验证码，请打开邮箱确认";
-        }else{
+        } else {
             message += "验证码已发送，60秒后才可重发验证码";
         }
 
