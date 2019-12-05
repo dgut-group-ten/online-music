@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(tags = "用户操作相关接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -30,7 +29,11 @@ public class UserController {
     @Autowired
     private IEmailService emailService;
 
-    @ApiOperation(value = "用户登录接口")
+    /**
+     * 登录验证
+     * @param userMap 登录信息
+     * @return 返回前端需要的数据
+     */
     @PostMapping("/token")
     @ResponseBody
     public ResponseEntity login(@RequestParam Map<String, String> userMap) {
@@ -58,7 +61,11 @@ public class UserController {
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
     }
 
-    @ApiOperation(value = "用户注册接口")
+    /**
+     * 注册
+     * @param userMap 注册信息
+     * @return 返回提示信息
+     */
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     @ResponseBody
@@ -89,7 +96,11 @@ public class UserController {
         return responseEntity.message(message.toString());
     }
 
-    @ApiIgnore
+    /**
+     * 查看某一用户的信息
+     * @param id 目标用户id
+     * @return 返回用户信息
+     */
     @GetMapping("/{id}")
     @ResponseBody
     public ResponseEntity getOneUserInfo(@PathVariable int id) {
@@ -97,7 +108,11 @@ public class UserController {
         return new ResponseEntity().message("用户信息获取成功").data(userMap);
     }
 
-    @ApiIgnore
+    /**
+     * 获取个人信息
+     * @param request 请求实体
+     * @return 返回个人信息
+     */
     @GetMapping
     @ResponseBody
     public ResponseEntity getPersonalInfo(HttpServletRequest request) {
@@ -108,7 +123,12 @@ public class UserController {
         return new ResponseEntity().message("用户信息获取成功").data(user);
     }
 
-    @ApiIgnore
+    /**
+     * 修改用户信息，包括头像
+     * @param userMap 修改后的用户信息
+     * @param request 请求实体
+     * @return 返回修改后的内容
+     */
     @PutMapping
     @ResponseBody
     public ResponseEntity update(@RequestParam Map<String, Object> userMap, HttpServletRequest request) {
@@ -125,18 +145,18 @@ public class UserController {
         return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
     }
 
-//    @ApiIgnore
-//    @PutMapping("/{id}")
-//    @ResponseBody
-//    public ResponseEntity update(@RequestParam MultipartFile file, @PathVariable int id) {
-//        //查原有用户数据
-//        User target = userService.findById(id);
-//        //修改用户信息
-//        String path = FileUploadUtil.uploadFile(file);
-//        target.setHeadIcon(path);
-//        //保存已修改信息
-//        User user = userService.save(target);
-//
-//        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
-//    }
+    @ApiIgnore
+    @PutMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity update(@RequestParam MultipartFile file, @PathVariable int id) {
+        //查原有用户数据
+        User target = userService.findById(id);
+        //修改用户信息
+        String path = FileUploadUtil.uploadFile(file);
+        target.setHeadIcon(path);
+        //保存已修改信息
+        User user = userService.save(target);
+
+        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
+    }
 }
