@@ -2,6 +2,7 @@ package com.groupten.online_music.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.groupten.online_music.entity.entityEnum.CommentType;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -21,7 +22,7 @@ public class Comment implements Serializable {
     @Column(nullable = false)
     private Integer pid = 0;    //父评论id,评论分两级,二级评论的pid为被回复的一级评论cid, 默认为一级评论-0
     @Column(nullable = false)
-    private Integer resourceId;//对应资源id
+    private Long resourceId;//对应资源id
     @NotEmpty(message = "评论内容不能为空")
     @Size(max = 150, message = "评论内容不能多余150个字符")
     @Column(length = 150, nullable = false)
@@ -37,6 +38,7 @@ public class Comment implements Serializable {
     @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
+
     private User user;//评论用户
 
     @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
@@ -46,7 +48,7 @@ public class Comment implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pid", referencedColumnName = "cid")
-    @OrderBy("cid ASC")
+    @OrderBy("created DESC")
     private List<Comment> commentList = new ArrayList<>();//二级评论列表
 
     public Integer getCid() {
@@ -65,11 +67,11 @@ public class Comment implements Serializable {
         this.pid = pid;
     }
 
-    public Integer getResourceId() {
+    public Long getResourceId() {
         return resourceId;
     }
 
-    public void setResourceId(Integer resourceId) {
+    public void setResourceId(Long resourceId) {
         this.resourceId = resourceId;
     }
 
@@ -135,6 +137,6 @@ public class Comment implements Serializable {
     public Comment(Map<String, String> commentMap) {
         this.content = commentMap.get("content");
         this.type = CommentType.values()[Integer.parseInt(commentMap.get("type"))];
-        this.resourceId = Integer.parseInt(commentMap.get("resourceId"));
+        this.resourceId = Long.parseLong(commentMap.get("resourceId"));
     }
 }

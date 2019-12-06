@@ -125,4 +125,15 @@ public class CommentService implements ICommentService {
     public List<Comment> findAll() {
         return (List<Comment>) commentDao.findAll();
     }
+
+    /**
+     * 查找某资源下的所有评论
+     *
+     * @param type 资源类型
+     * @return 返回评论集合
+     */
+    @Override
+    public Page<Comment> findByPage(int type, Long rid, Pageable pageable) {
+        return commentDao.findCommentsByResourceIdAndTypeOrderByCreatedAsc(rid, CommentType.values()[type], pageable);
+    }
 }

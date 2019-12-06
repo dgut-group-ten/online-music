@@ -15,4 +15,6 @@ public interface ICommentService {
     List<Comment> findByType(int type);//获取某类资源下的评论集合
 
     List<Comment> findAll();
+
+    Page<Comment> findByPage(int type, Long rid, Pageable pageable);
 }
