@@ -2,11 +2,14 @@ package com.groupten.online_music.web;
 
 import com.groupten.online_music.common.jwt.JWTUtils;
 import com.groupten.online_music.common.utils.ResponseEntity;
+import com.groupten.online_music.common.utils.STablePageRequest;
+import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.common.utils.exception.AuthenticationException;
 import com.groupten.online_music.entity.Comment;
 import com.groupten.online_music.service.impl.ICommentService;
 import com.groupten.online_music.service.impl.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,13 +66,22 @@ public class CommentController {
         return new ResponseEntity().message("删除评论成功! ");
     }
 
-    @GetMapping("/{type}")
+    @GetMapping
     @ResponseBody
-    public ResponseEntity searchCommentByCommentType(@PathVariable int type) {
+    public ResponseEntity searchCommentByCommentType(@RequestParam Map<String, String> commentMap) {
+        //处理请求数据
+        if(commentMap.get("rid")==null || commentMap.get("type")==null) throw new ApplicationException("请求的查询参数格式有误! ");
+        long rid = Long.parseLong(commentMap.get("rid"));
+        int type = Integer.parseInt(commentMap.get("type"));
+        //处理排序参数
+        String ordering = "-created";//排序默认值
+        if (commentMap.get(ordering)==null) commentMap.put("ordering", ordering);
+        STablePageRequest sTablePageRequest = new STablePageRequest(commentMap);
+
         //1.根据type查找相应模块评论, type= 0-song, 1-song list
-        List<Comment> comments = commentService.findByType(type);
+        Page<Comment> comments = commentService.findByPage(type, rid, sTablePageRequest.sTablePageable());
         //2.返回结果
-        return new ResponseEntity().message("查询成功").data(comments);
+        return new ResponseEntity<Page<Comment>>().message("查询成功").data(comments);
     }
 
 }

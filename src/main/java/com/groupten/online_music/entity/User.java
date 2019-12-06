@@ -1,16 +1,12 @@
 package com.groupten.online_music.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.groupten.online_music.common.utils.UserDTO;
 import com.groupten.online_music.entity.entityEnum.UserStatus;
 import com.groupten.online_music.entity.entityEnum.UserType;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Entity
