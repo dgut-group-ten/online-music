@@ -78,8 +78,8 @@ public class CommentController {
         if (commentMap.get(ordering)==null) commentMap.put("ordering", ordering);
         STablePageRequest sTablePageRequest = new STablePageRequest(commentMap);
 
-        //1.根据type查找相应模块评论, type= 0-song, 1-song list
-        Page<Comment> comments = commentService.findByPage(type, rid, sTablePageRequest.sTablePageable());
+        //1.根据type, rid, pid查找相应资源, type= 0-song, 1-song list
+        Page<Comment> comments = commentService.findByPage(type, rid, 0, sTablePageRequest.sTablePageable());
         //2.返回结果
         return new ResponseEntity<Page<Comment>>().message("查询成功").data(comments);
     }

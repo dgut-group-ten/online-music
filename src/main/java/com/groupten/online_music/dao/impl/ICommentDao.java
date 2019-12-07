@@ -15,7 +15,7 @@ import java.util.List;
 public interface ICommentDao extends JpaSpecificationExecutor<Comment>, PagingAndSortingRepository<Comment, Integer> {
     @Query("from Comment c where c.type = ?1 and c.pid = 0")
     List<Comment> findByType(CommentType type);
-    Page<Comment> findCommentsByResourceIdAndTypeOrderByCreatedAsc(Long resourceId, CommentType type, Pageable pageable);
+    Page<Comment> findCommentsByResourceIdAndTypeAndPid(Long resourceId, CommentType type, Integer pid,Pageable pageable);
     @Modifying
     @Transactional
     @Query("delete from Comment c where c.pid = ?1")

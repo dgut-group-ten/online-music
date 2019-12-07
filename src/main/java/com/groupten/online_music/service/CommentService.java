@@ -133,7 +133,7 @@ public class CommentService implements ICommentService {
      * @return 返回评论集合
      */
     @Override
-    public Page<Comment> findByPage(int type, Long rid, Pageable pageable) {
-        return commentDao.findCommentsByResourceIdAndTypeOrderByCreatedAsc(rid, CommentType.values()[type], pageable);
+    public Page<Comment> findByPage(int type, Long rid, int pid, Pageable pageable) {
+        return commentDao.findCommentsByResourceIdAndTypeAndPid(rid, CommentType.values()[type], pid, pageable);
     }
 }
