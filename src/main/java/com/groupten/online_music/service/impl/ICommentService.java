@@ -16,5 +16,5 @@ public interface ICommentService {
 
     List<Comment> findAll();
 
-    Page<Comment> findByPage(int type, Long rid, Pageable pageable);
+    Page<Comment> findByPage(int type, Long rid, int pid, Pageable pageable);
 }
