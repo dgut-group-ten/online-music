@@ -55,7 +55,7 @@ public class UserController {
         }
 
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("token", token);
+        data.put("Token", token);
         //data.put("uid", uid);
         data.put("name", userMap.get("name"));
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
