@@ -116,7 +116,7 @@ public class UserController {
     @GetMapping
     @ResponseBody
     public ResponseEntity getPersonalInfo(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         User user = userService.findById(target_id);
 
@@ -133,7 +133,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity update(@RequestParam Map<String, Object> userMap, HttpServletRequest request) {
         //token验证，得到uid
-        String token = request.getHeader("token");
+        String token = request.getHeader("Token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         //查原有用户数据
         User target = userService.findById(target_id);
