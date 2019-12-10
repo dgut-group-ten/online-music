@@ -3,6 +3,7 @@ package com.groupten.online_music.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.groupten.online_music.entity.entityEnum.CommentType;
 import org.hibernate.annotations.Where;
+import org.springframework.data.jdbc.repository.query.Query;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -34,22 +35,18 @@ public class Comment implements Serializable {
     @Column(nullable = false)
     @Enumerated(value = EnumType.ORDINAL)
     private CommentType type;//评论类型——歌单, 歌曲
-
     @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
-
     private User user;//评论用户
-
     @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repliedId")
     private User repliedUser;//被回复用户
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pid", referencedColumnName = "cid")
-    @OrderBy("created DESC")
-    private List<Comment> commentList = new ArrayList<>();//二级评论列表
+    @Transient
+    private Integer totalCountOfSonComment;
+    @Transient
+    private List<Comment> commentList;//二级评论列表
 
     public Integer getCid() {
         return cid;
@@ -107,6 +104,14 @@ public class Comment implements Serializable {
         this.type = type;
     }
 
+    public Integer getTotalCountOfSonComment() {
+        return totalCountOfSonComment;
+    }
+
+    public void setTotalCountOfSonComment(Integer totalCountOfSonComment) {
+        this.totalCountOfSonComment = totalCountOfSonComment;
+    }
+
     public User getUser() {
         return user;
     }
@@ -138,5 +143,10 @@ public class Comment implements Serializable {
         this.content = commentMap.get("content");
         this.type = CommentType.values()[Integer.parseInt(commentMap.get("type"))];
         this.resourceId = Long.parseLong(commentMap.get("resourceId"));
+    }
+
+    public Comment(Integer pid, Integer totalCountOfSonComment) {
+        this.pid = pid;
+        this.totalCountOfSonComment = totalCountOfSonComment;
     }
 }

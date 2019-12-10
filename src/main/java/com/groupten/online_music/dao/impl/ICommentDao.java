@@ -8,14 +8,19 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface ICommentDao extends JpaSpecificationExecutor<Comment>, PagingAndSortingRepository<Comment, Integer> {
-    @Query("from Comment c where c.type = ?1 and c.pid = 0")
-    List<Comment> findByType(CommentType type);
-    Page<Comment> findCommentsByResourceIdAndTypeAndPid(Long resourceId, CommentType type, Integer pid,Pageable pageable);
+    //根据pid和type和rid进行分页查询
+    Page<Comment> findCommentsByResourceIdAndTypeAndPid(Long resourceId, CommentType type, Integer pid, Pageable pageable);
+    //根据pid分页查询子评论
+    @Query(value = "select * from t_comment c where c.pid = :pid order by c.created desc limit :offset, :ps", nativeQuery = true)
+    List<Comment> findSonCommentByPid(@Param("pid") Integer pid, @Param("offset") Integer offset, @Param("ps") Integer size);
+    //获取子评论数目
+    Integer countCommentByPid(Integer pid);
     @Modifying
     @Transactional
     @Query("delete from Comment c where c.pid = ?1")

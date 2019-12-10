@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,20 +69,39 @@ public class CommentController {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity searchCommentByCommentType(@RequestParam Map<String, String> commentMap) {
+    public ResponseEntity searchCommentByResourceType(@RequestParam Map<String, String> commentMap) {
         //处理请求数据
-        if(commentMap.get("rid")==null || commentMap.get("type")==null) throw new ApplicationException("请求的查询参数格式有误! ");
+        if (commentMap.get("rid") == null || commentMap.get("type") == null)
+            throw new ApplicationException("请求的查询参数格式有误! ");
         long rid = Long.parseLong(commentMap.get("rid"));
         int type = Integer.parseInt(commentMap.get("type"));
         //处理排序参数
         String ordering = "-created";//排序默认值
-        if (commentMap.get(ordering)==null) commentMap.put("ordering", ordering);
+        commentMap.putIfAbsent("ordering", ordering);
         STablePageRequest sTablePageRequest = new STablePageRequest(commentMap);
 
         //1.根据type, rid, pid查找相应资源, type= 0-song, 1-song list
         Page<Comment> comments = commentService.findByPage(type, rid, 0, sTablePageRequest.sTablePageable());
+        List<Comment> commentList = comments.getContent();
+        for (int i = 0; i < commentList.size(); i++) {
+            Comment pC = commentList.get(i);
+            pC.setCommentList(commentService.findSonCommentByPid(pC.getCid(), 0, 3));
+            pC.setTotalCountOfSonComment(commentService.countByPid(pC.getCid()));
+        }
+
         //2.返回结果
         return new ResponseEntity<Page<Comment>>().message("查询成功").data(comments);
     }
 
+    @GetMapping("/{pid}")
+    @ResponseBody
+    public ResponseEntity searchSonCommentByPid(@PathVariable Integer pid, @RequestParam Map<String, String> commentMap) {
+        //检查请求格式
+        if (pid <= 0 || commentMap.get("offset") == null || commentMap.get("size") == null)
+            throw new ApplicationException("请求参数错误，请检查参数格式！");
+        //根据pid和分页参数查询
+        List<Comment> commentList = commentService.findSonCommentByPid(pid, commentMap);
+        //返回结果
+        return new ResponseEntity().message("查询子评论成功").data(commentList);
+    }
 }
