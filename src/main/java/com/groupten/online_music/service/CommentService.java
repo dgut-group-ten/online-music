@@ -1,6 +1,5 @@
 package com.groupten.online_music.service;
 
-import com.groupten.online_music.common.utils.exception.AuthenticationException;
 import com.groupten.online_music.dao.impl.ICommentDao;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.Comment;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -110,17 +111,6 @@ public class CommentService implements ICommentService {
         }
     }
 
-    /**
-     * 查找某类资源下的所有评论
-     *
-     * @param type 资源类型
-     * @return 返回评论集合
-     */
-    @Override
-    public List<Comment> findByType(int type) {
-        return commentDao.findByType(CommentType.values()[type]);
-    }
-
     @Override
     public List<Comment> findAll() {
         return (List<Comment>) commentDao.findAll();
@@ -135,5 +125,35 @@ public class CommentService implements ICommentService {
     @Override
     public Page<Comment> findByPage(int type, Long rid, int pid, Pageable pageable) {
         return commentDao.findCommentsByResourceIdAndTypeAndPid(rid, CommentType.values()[type], pid, pageable);
+    }
+
+    /**
+     * 查询父评论下子评论
+     * @param pid 父评论id
+     * @param commentMap 查询条件
+     * @return 返回值
+     */
+    @Override
+    public List<Comment> findSonCommentByPid(Integer pid, Map<String, String> commentMap) {
+        //获取分页参数
+        int offset = Integer.parseInt(commentMap.get("offset"));
+        int size = Integer.parseInt(commentMap.get("size"));
+
+        return commentDao.findSonCommentByPid(pid, offset, size);
+    }
+
+    @Override
+    public List<Comment> findSonCommentByPid(Integer pid, Integer offset, Integer size) {
+        return commentDao.findSonCommentByPid(pid, offset, size);
+    }
+
+    /**
+     * 统计每条父评论下子评论数目
+     * @param pid 父评论id
+     * @return countMap
+     */
+    @Override
+    public Integer countByPid(Integer pid) {
+        return commentDao.countCommentByPid(pid);
     }
 }
