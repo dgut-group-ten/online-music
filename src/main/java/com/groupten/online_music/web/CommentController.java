@@ -25,7 +25,7 @@ public class CommentController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/test")
+    @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity createComment(@RequestParam Map<String, String> commentMap, HttpServletRequest request) {
