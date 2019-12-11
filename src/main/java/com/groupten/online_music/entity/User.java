@@ -30,12 +30,15 @@ public class User implements Serializable {
     private String description;
     @Column(length = 40)
     private String email;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private UserInfo userInfo;
 
     public User() {
     }
 
     public User(Map<String, String> userMap) {
-        this.name =  userMap.get("name");
+        this.name = userMap.get("name");
         this.password = userMap.get("password");
         this.headIcon = userMap.get("headIcon");
         this.description = userMap.get("description");
@@ -44,12 +47,8 @@ public class User implements Serializable {
 
     public User(UserDTO userDTO) {
         this.name = userDTO.getName();
-        this.password = userDTO.getPassword();
         this.headIcon = userDTO.getHeadIcon();
         this.description = userDTO.getDescription();
-        this.email = userDTO.getEmail();
-        this.status = userDTO.getStatus();
-        this.type = userDTO.getType();
         this.created = userDTO.getCreated();
     }
 
@@ -123,5 +122,13 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 }
