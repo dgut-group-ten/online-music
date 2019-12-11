@@ -35,14 +35,14 @@ public class Comment implements Serializable {
     @Column(nullable = false)
     @Enumerated(value = EnumType.ORDINAL)
     private CommentType type;//评论类型——歌单, 歌曲
-    @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
-    private User user;//评论用户
-    @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
+    private UserInfo user;//评论用户
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repliedId")
-    private User repliedUser;//被回复用户
+    private UserInfo repliedUser;//被回复用户
     @Transient
     private Integer totalCountOfSonComment;
     @Transient
@@ -112,19 +112,19 @@ public class Comment implements Serializable {
         this.totalCountOfSonComment = totalCountOfSonComment;
     }
 
-    public User getUser() {
+    public UserInfo getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserInfo user) {
         this.user = user;
     }
 
-    public User getRepliedUser() {
+    public UserInfo getRepliedUser() {
         return repliedUser;
     }
 
-    public void setRepliedUser(User repliedUser) {
+    public void setRepliedUser(UserInfo repliedUser) {
         this.repliedUser = repliedUser;
     }
 

@@ -40,7 +40,7 @@ public class CommentService implements ICommentService {
         if (user == null) return null;
         //2.建立关联关系
         comment.setCreated(new Date());
-        comment.setUser(user);
+        comment.setUser(user.getUserInfo());
         //3.保存评论
         return commentDao.save(comment);
     }
@@ -72,7 +72,7 @@ public class CommentService implements ICommentService {
         }
         comment.setCreated(new Date());//保存时间
         //3.建立关联关系
-        comment.setUser(user);
+        comment.setUser(user.getUserInfo());
         comment.setRepliedUser(beReplied.getUser());
         //4.保存
         return commentDao.save(comment);
