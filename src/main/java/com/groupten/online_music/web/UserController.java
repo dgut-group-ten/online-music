@@ -7,6 +7,7 @@ import com.groupten.online_music.common.utils.exception.ApplicationException;
 import com.groupten.online_music.common.utils.exception.AuthenticationException;
 import com.groupten.online_music.entity.EmailConfirm;
 import com.groupten.online_music.entity.User;
+import com.groupten.online_music.entity.UserInfo;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
 import com.groupten.online_music.service.impl.IEmailService;
 import com.groupten.online_music.service.impl.IUserService;
@@ -98,14 +99,14 @@ public class UserController {
 
     /**
      * 查看某一用户的信息
-     * @param id 目标用户id
+     * @param name 目标用户名
      * @return 返回用户信息
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{name}")
     @ResponseBody
-    public ResponseEntity getOneUserInfo(@PathVariable int id) {
-        Map<String, Object> userMap = userService.getUserInfo(id);
-        return new ResponseEntity().message("用户信息获取成功").data(userMap);
+    public ResponseEntity getOneUserInfo(@PathVariable String name) {
+        UserInfo userInfo = userService.getUserInfoByName(name);
+        return new ResponseEntity().message("用户信息获取成功").data(userInfo);
     }
 
     /**
