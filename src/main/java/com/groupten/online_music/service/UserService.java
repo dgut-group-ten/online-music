@@ -86,7 +86,6 @@ public class UserService implements IUserService {
         User user = findById(uid);
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("name", user.getName());
-        //userInfo.put("email", user.getEmail());
         userInfo.put("created", user.getCreated());
         userInfo.put("status", user.getStatus());
         userInfo.put("type", user.getType());
@@ -119,5 +118,11 @@ public class UserService implements IUserService {
         //更改其他信息
         target.setName((String) userMap.get("name"));
         target.setName((String) userMap.get("description"));
+    }
+
+    @Override
+    public UserInfo getUserInfoByName(String name) {
+        User user = userDao.findByUserName(name);
+        return user.getUserInfo();
     }
 }
