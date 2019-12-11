@@ -4,6 +4,7 @@ import com.groupten.online_music.common.utils.EncryptionUtil;
 import com.groupten.online_music.common.utils.FileUploadUtil;
 import com.groupten.online_music.dao.impl.IUserDao;
 import com.groupten.online_music.entity.User;
+import com.groupten.online_music.entity.UserInfo;
 import com.groupten.online_music.entity.entityEnum.UserStatus;
 import com.groupten.online_music.entity.entityEnum.UserType;
 import com.groupten.online_music.service.impl.IUserService;
@@ -51,6 +52,7 @@ public class UserService implements IUserService {
         user.setStatus(UserStatus.ENABLE);
         user.setType(UserType.NORMAL);
         user.setCreated(new Date());
+        user.setUserInfo(new UserInfo(user.getName()));
         //3.为用户密码加密
         user.setPassword(EncryptionUtil.encryption(user.getPassword()));
 
