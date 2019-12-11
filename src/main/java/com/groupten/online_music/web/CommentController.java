@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +25,12 @@ public class CommentController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping
+    @PostMapping("/test")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity createComment(@RequestParam Map<String, String> commentMap, HttpServletRequest request) {
         //用户登录验证
-        String token = request.getHeader("token");
+        String token = request.getHeader("Token");
         int uid = JWTUtils.verifyToken(token).get("uid").asInt();
         //1.封装数据到Comment实体中
         Comment comment = new Comment(commentMap);
@@ -56,7 +55,7 @@ public class CommentController {
     @ResponseBody
     public ResponseEntity deleteComment(@PathVariable int id, HttpServletRequest request) {
         //用户登录验证
-        String token = request.getHeader("token");
+        String token = request.getHeader("Token");
         int uid = JWTUtils.verifyToken(token).get("uid").asInt();
         //1.查找评论与所属用户
         Comment target = commentService.findById(id);
