@@ -15,6 +15,10 @@ public class UserInfo {
     @Column(nullable = true, length = 150)
     private String description;
 
+    public UserInfo(String name) {
+        this.name = name;
+    }
+
     public Integer getUid() {
         return uid;
     }
