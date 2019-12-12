@@ -25,13 +25,13 @@ public class FileUploadUtil {
             File uploadTmp = new File(path.getAbsolutePath(), "static/tmp/");
             //在服务端生成中间文件
             if (!uploadTmp.exists()) uploadTmp.mkdirs();
-            uploadingFile = new File(uploadTmp + "\\" + tmpFileName);
+            uploadingFile = new File(uploadTmp + "/" + tmpFileName);
             multipartFile.transferTo(uploadingFile);
             //上传文件成功,移动到目的文件夹
             File uploadPath = new File(path.getAbsolutePath(), "static/headIcon/");
             newFileName = tmpFileName.substring(0, tmpFileName.lastIndexOf("."));
             if (!uploadPath.exists()) uploadPath.mkdirs();
-            uploadedFile = new File(uploadPath + "\\" + newFileName);
+            uploadedFile = new File(uploadPath + "/" + newFileName);
             if (!uploadingFile.renameTo(uploadedFile)) {//移动文件失败
                 System.out.println("中间文件生成成功! 文件移动至目标文件夹失败!");
                 return null;
@@ -44,6 +44,6 @@ public class FileUploadUtil {
             uploadingFile.delete();//删除中间文件
         }
 
-        return "https://localhost:8081/headIcon/" + newFileName;
+        return "headIcon/" + newFileName;
     }
 }

@@ -114,10 +114,16 @@ public class UserService implements IUserService {
     public void changeUserInfo(User target, Map<String, Object> userMap) {
         //更换头像
         String path = FileUploadUtil.uploadFile((MultipartFile) userMap.get("headIcon"));
-        if (path != null) target.setHeadIcon(path);
+        if (path != null){
+            target.setHeadIcon(path);
+            target.getUserInfo().setHeadIcon(path);
+        }
         //更改其他信息
         target.setName((String) userMap.get("name"));
         target.setName((String) userMap.get("description"));
+
+        target.getUserInfo().setName((String) userMap.get("name"));
+        target.getUserInfo().setDescription((String) userMap.get("description"));
     }
 
     @Override

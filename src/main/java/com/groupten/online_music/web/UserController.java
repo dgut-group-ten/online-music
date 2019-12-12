@@ -44,8 +44,6 @@ public class UserController {
         ResponseEntity responseEntity = new ResponseEntity<User>();
         boolean result = false;
         String token = null;
-//        System.out.println(userMap.toString());
-//        System.out.println("userMap.get(\"name\"):" + userMap.get("name"));
         //登录操作
         int uid = userService.login(user);//登录失败返回-1
         if ((result = (uid != -1))) {//验证成功生成token
@@ -142,8 +140,10 @@ public class UserController {
         userService.changeUserInfo(target, userMap);
         //保存已修改信息
         User user = userService.save(target);
-
-        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user);
+        //处理返回的信息
+        StringBuffer url = request.getRequestURL();
+        user.getUserInfo().setHeadIcon(url.substring(0, url.indexOf(request.getRequestURI())) + "/" + user.getUserInfo().getHeadIcon());
+        return new ResponseEntity<User>().message("用户信息更改请求成功").data(user.getUserInfo());
     }
 
     @ApiIgnore
