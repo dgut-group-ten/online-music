@@ -17,8 +17,9 @@ public class UserInfo {
 
     public UserInfo() {
     }
-    public UserInfo(String name) {
+    public UserInfo(String name, String headIcon) {
         this.name = name;
+        this.headIcon = headIcon;
     }
 
     public Integer getUid() {
