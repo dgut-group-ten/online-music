@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 spring:
   datasource:
     url: jdbc:mysql://music-01.niracler.com:3306/music_db?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
@@ -18,7 +17,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   resources:
-    static-locations: classpath:static/,file:static/
+    static-locations: file:/root/upload/
+  mvc:
+    static-path-pattern: /**
   http:
     encoding:
       force: true
