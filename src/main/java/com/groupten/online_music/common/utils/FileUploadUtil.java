@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class FileUploadUtil {
-    @Value("${spring.resources.static-locations}")
-    private static String uploadFolder;
+    private final static String uploadFolder = "/root/upload/";
     private final static String uploadLocation = "images/";
 
     public static String uploadFile(MultipartFile multipartFile) {
