@@ -17,7 +17,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-
+  resources:
+    static-locations: classpath:static/,file:static/
   http:
     encoding:
       force: true
