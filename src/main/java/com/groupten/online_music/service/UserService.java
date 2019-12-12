@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,22 +114,39 @@ public class UserService implements IUserService {
     @Override
     public void changeUserInfo(User target, Map<String, Object> userMap) {
         //更换头像
-        String path = FileUploadUtil.uploadFile((MultipartFile) userMap.get("headIcon"));
+        MultipartFile file = (MultipartFile) userMap.get("headIcon");
+        String path = FileUploadUtil.uploadFile(file);
         if (path != null){
             target.setHeadIcon(path);
             target.getUserInfo().setHeadIcon(path);
         }
         //更改其他信息
         target.setName((String) userMap.get("name"));
-        target.setName((String) userMap.get("description"));
+        target.setDescription((String) userMap.get("description"));
 
         target.getUserInfo().setName((String) userMap.get("name"));
         target.getUserInfo().setDescription((String) userMap.get("description"));
     }
 
+    /**
+     * 根据用户名查询用户信息
+     * @param name 用户名
+     * @return 用户信息
+     */
     @Override
     public UserInfo getUserInfoByName(String name) {
         User user = userDao.findByUserName(name);
         return user.getUserInfo();
+    }
+
+    /**
+     * 组装头像访问链接
+     * @param request 访问信息
+     * @return 头像链接
+     */
+    @Override
+    public String resetHeadIconUrl(HttpServletRequest request, String headIcon) {
+        StringBuffer url = request.getRequestURL();
+        return url.substring(0, url.indexOf(request.getRequestURI())) + "/" + headIcon;
     }
 }
