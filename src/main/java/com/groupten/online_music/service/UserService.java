@@ -53,7 +53,8 @@ public class UserService implements IUserService {
         user.setStatus(UserStatus.ENABLE);
         user.setType(UserType.NORMAL);
         user.setCreated(new Date());
-        user.setUserInfo(new UserInfo(user.getName()));
+        user.setHeadIcon("images/default.jpg");
+        user.setUserInfo(new UserInfo(user.getName(), user.getHeadIcon()));
         //3.为用户密码加密
         user.setPassword(EncryptionUtil.encryption(user.getPassword()));
 
