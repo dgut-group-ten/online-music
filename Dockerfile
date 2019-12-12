@@ -34,7 +34,7 @@ COPY src /build/src/
 
 WORKDIR /build/
 
-RUN mvn package -nsu -Dmaven.test.skip=true
+RUN mvn package
 
 # ------------------------- 8< -------------------------
 

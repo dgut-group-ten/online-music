@@ -4,6 +4,7 @@ import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.UserInfo;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface IUserService {
@@ -17,4 +18,5 @@ public interface IUserService {
     public String changeHeadIcon(MultipartFile file);
     public void changeUserInfo(User target, Map<String, Object> userMap);
     UserInfo getUserInfoByName(String name); //根据用户名获取用户信息
+    String resetHeadIconUrl(HttpServletRequest request, String headIcon);
 }

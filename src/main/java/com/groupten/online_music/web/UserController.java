@@ -11,12 +11,10 @@ import com.groupten.online_music.entity.UserInfo;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
 import com.groupten.online_music.service.impl.IEmailService;
 import com.groupten.online_music.service.impl.IUserService;
-import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -102,8 +100,9 @@ public class UserController {
      */
     @GetMapping("/{name}")
     @ResponseBody
-    public ResponseEntity getOneUserInfo(@PathVariable String name) {
+    public ResponseEntity getOneUserInfo(@PathVariable String name, HttpServletRequest request) {
         UserInfo userInfo = userService.getUserInfoByName(name);
+        userInfo.setHeadIcon(userService.resetHeadIconUrl(request, userInfo.getHeadIcon()));
         return new ResponseEntity().message("用户信息获取成功").data(userInfo);
     }
 
@@ -118,8 +117,8 @@ public class UserController {
         String token = request.getHeader("Token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         User user = userService.findById(target_id);
-
-        return new ResponseEntity().message("用户信息获取成功").data(user);
+        user.getUserInfo().setHeadIcon(userService.resetHeadIconUrl(request, user.getUserInfo().getHeadIcon()));
+        return new ResponseEntity().message("用户信息获取成功").data(user.getUserInfo());
     }
 
     /**
@@ -130,23 +129,22 @@ public class UserController {
      */
     @PutMapping
     @ResponseBody
-    public ResponseEntity update(@RequestParam Map<String, Object> userMap, HttpServletRequest request) {
+    public ResponseEntity update(@RequestParam Map<String, Object> userMap, @RequestParam MultipartFile headIcon, HttpServletRequest request) {
         //token验证，得到uid
         String token = request.getHeader("Token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         //查原有用户数据
         User target = userService.findById(target_id);
         //修改用户信息
+        userMap.put("headIcon", headIcon);
         userService.changeUserInfo(target, userMap);
         //保存已修改信息
         User user = userService.save(target);
         //处理返回的信息
-        StringBuffer url = request.getRequestURL();
-        user.getUserInfo().setHeadIcon(url.substring(0, url.indexOf(request.getRequestURI())) + "/" + user.getUserInfo().getHeadIcon());
+        user.getUserInfo().setHeadIcon(userService.resetHeadIconUrl(request, user.getUserInfo().getHeadIcon()));
         return new ResponseEntity<User>().message("用户信息更改请求成功").data(user.getUserInfo());
     }
 
-    @ApiIgnore
     @PutMapping("/{id}")
     @ResponseBody
     public ResponseEntity update(@RequestParam MultipartFile file, @PathVariable int id) {

@@ -28,7 +28,7 @@ public class FileUploadUtil {
             uploadingFile = new File(uploadTmp + "/" + tmpFileName);
             multipartFile.transferTo(uploadingFile);
             //上传文件成功,移动到目的文件夹
-            File uploadPath = new File(path.getAbsolutePath(), "static/headIcon/");
+            File uploadPath = new File(path.getAbsolutePath(), "src/resources/headIcon/");
             newFileName = tmpFileName.substring(0, tmpFileName.lastIndexOf("."));
             if (!uploadPath.exists()) uploadPath.mkdirs();
             uploadedFile = new File(uploadPath + "/" + newFileName);
