@@ -101,12 +101,12 @@ public class UserController {
     @GetMapping("/{name}")
     @ResponseBody
     public ResponseEntity getOneUserInfo(@PathVariable String name, HttpServletRequest request) {
-        UserInfo userInfo = userService.getUserInfoByName(name);
-        if (userInfo == null){
+        User user= userService.getUserInfoByName(name);
+        if (user == null){
             throw new ApplicationException("用户不存在");
         }
-        userInfo.setHeadIcon(userService.resetHeadIconUrl(request, userInfo.getHeadIcon()));
-        return new ResponseEntity().message("用户信息获取成功").data(userInfo);
+        user.getUserInfo().setHeadIcon(userService.resetHeadIconUrl(request, user.getUserInfo().getHeadIcon()));
+        return new ResponseEntity().message("用户信息获取成功").data(user.getUserInfo());
     }
 
     /**

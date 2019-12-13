@@ -136,9 +136,9 @@ public class UserService implements IUserService {
      * @return 用户信息
      */
     @Override
-    public UserInfo getUserInfoByName(String name) {
+    public User getUserInfoByName(String name) {
         User user = userDao.findByUserName(name);
-        return user == null ? null : user.getUserInfo();
+        return user == null ? null : user;
     }
 
     /**
@@ -150,6 +150,8 @@ public class UserService implements IUserService {
     @Override
     public String resetHeadIconUrl(HttpServletRequest request, String headIcon) {
         StringBuffer url = request.getRequestURL();
+        System.out.println(url);
+        System.out.println(url.substring(0, url.indexOf(request.getRequestURI())) + "/" + headIcon);
         return url.substring(0, url.indexOf(request.getRequestURI())) + "/" + headIcon;
     }
 }
