@@ -33,7 +33,7 @@ public class UserService implements IUserService {
      */
     @Override
     public int login(User user) {
-        User rs = userDao.findByUserName(user.getName());
+        User rs = userDao.findUserByName(user.getName());
         if (rs != null) {//存在用户，匹配密码，正确返回uid
             if (rs.getPassword().equals(EncryptionUtil.encryption(user.getPassword()))) {
                 return rs.getUid();
@@ -64,7 +64,7 @@ public class UserService implements IUserService {
 
     @Override
     public boolean hasUser(User user) {
-        return null != userDao.findByUserName(user.getName());
+        return null != userDao.findUserByName(user.getName());
     }
 
     @Override
@@ -117,7 +117,7 @@ public class UserService implements IUserService {
         //更换头像
         MultipartFile file = (MultipartFile) userMap.get("headIcon");
         String path = FileUploadUtil.uploadFile(file);
-        if (path != null){
+        if (path != null) {
             target.setHeadIcon(path);
             target.getUserInfo().setHeadIcon(path);
         }
@@ -131,17 +131,19 @@ public class UserService implements IUserService {
 
     /**
      * 根据用户名查询用户信息
+     *
      * @param name 用户名
      * @return 用户信息
      */
     @Override
     public UserInfo getUserInfoByName(String name) {
         User user = userDao.findByUserName(name);
-        return user.getUserInfo();
+        return user == null ? null : user.getUserInfo();
     }
 
     /**
      * 组装头像访问链接
+     *
      * @param request 访问信息
      * @return 头像链接
      */

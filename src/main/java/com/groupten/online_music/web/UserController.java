@@ -102,6 +102,9 @@ public class UserController {
     @ResponseBody
     public ResponseEntity getOneUserInfo(@PathVariable String name, HttpServletRequest request) {
         UserInfo userInfo = userService.getUserInfoByName(name);
+        if (userInfo == null){
+            throw new ApplicationException("用户不存在");
+        }
         userInfo.setHeadIcon(userService.resetHeadIconUrl(request, userInfo.getHeadIcon()));
         return new ResponseEntity().message("用户信息获取成功").data(userInfo);
     }
