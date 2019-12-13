@@ -17,6 +17,6 @@ public interface IUserService {
     public Map<String, Object> getUserInfo(int uid);//获取某一用户信息
     public String changeHeadIcon(MultipartFile file);
     public void changeUserInfo(User target, Map<String, Object> userMap);
-    UserInfo getUserInfoByName(String name); //根据用户名获取用户信息
-    String resetHeadIconUrl(HttpServletRequest request, String headIcon);
+    public User getUserInfoByName(String name); //根据用户名获取用户信息
+    public String resetHeadIconUrl(HttpServletRequest request, String headIcon);
 }

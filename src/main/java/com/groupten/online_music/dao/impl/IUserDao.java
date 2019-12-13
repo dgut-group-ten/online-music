@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IUserDao
         extends JpaSpecificationExecutor<User>, PagingAndSortingRepository<User, Integer> {
+    public User findUserByName(String target);
     @Query(value = "from User u where u.name = ?1")
     public User findByUserName(String target);
     @Query(value = "from User u where u.email = ?1")
