@@ -1,6 +1,5 @@
 package com.groupten.online_music.common.utils;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +11,11 @@ public class FileUploadUtil {
     private final static String uploadFolder = "/root/upload/";
     private final static String uploadLocation = "images/";
 
+    public static boolean deleteUploadedFile(String path){
+        File target = new File(uploadFolder + path);
+        if (!target.exists()) return false;
+        return target.delete();
+    }
     public static String uploadFile(MultipartFile multipartFile) {
         if (multipartFile.isEmpty())
             return "file is empty!";
