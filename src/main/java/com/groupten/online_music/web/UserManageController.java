@@ -71,4 +71,8 @@ public class UserManageController {
 
         return responseEntity.message("删除请求成功！");
     }
+
+    public ResponseEntity shutDownUser(@PathVariable int id) {
+        return null;
+    }
 }

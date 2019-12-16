@@ -24,7 +24,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private IUserDao userDao;
-
+    private final static String defaultIcon = "images/default.jpg";
     /**
      * 登录操作
      *
@@ -53,7 +53,7 @@ public class UserService implements IUserService {
         user.setStatus(UserStatus.ENABLE);
         user.setType(UserType.NORMAL);
         user.setCreated(new Date());
-        user.setHeadIcon("images/default.jpg");
+        user.setHeadIcon(defaultIcon);
         user.setUserInfo(new UserInfo(user.getName(), user.getHeadIcon()));
         //3.为用户密码加密
         user.setPassword(EncryptionUtil.encryption(user.getPassword()));
@@ -97,6 +97,11 @@ public class UserService implements IUserService {
         return userInfo;
     }
 
+    @Override
+    public User findByName(String name) {
+        return userDao.findByUserName(name);
+    }
+
     /**
      * 更换用户头像操作
      *
@@ -118,6 +123,7 @@ public class UserService implements IUserService {
         MultipartFile file = (MultipartFile) userMap.get("headIcon");
         String path = FileUploadUtil.uploadFile(file);
         if (path != null) {
+            //上传头像成功后删除旧头像
             target.setHeadIcon(path);
             target.getUserInfo().setHeadIcon(path);
         }
@@ -153,5 +159,22 @@ public class UserService implements IUserService {
         System.out.println(url);
         System.out.println(url.substring(0, url.indexOf(request.getRequestURI())) + "/" + headIcon);
         return url.substring(0, url.indexOf(request.getRequestURI())) + "/" + headIcon;
+    }
+
+    /**
+     * 更改密码
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param uid 用户id
+     * @return 结果
+     */
+    @Override
+    public boolean changePassword(String oldPassword, String newPassword, int uid) {
+        //查密码进行匹配
+        User user = userDao.findById(uid).orElse(null);
+        if (user == null || !user.getPassword().equals(EncryptionUtil.encryption(oldPassword))) return false;
+        //匹配成功修改密码
+        user.setPassword(EncryptionUtil.encryption(newPassword));
+        return userDao.save(user) != null;
     }
 }

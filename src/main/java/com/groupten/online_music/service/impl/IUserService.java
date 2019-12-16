@@ -15,8 +15,10 @@ public interface IUserService {
     public User findByEmail(String email);//通过邮箱查找用户
     public User save(User target);//保存用户
     public Map<String, Object> getUserInfo(int uid);//获取某一用户信息
+    public User findByName(String name);//获取某一用户信息
     public String changeHeadIcon(MultipartFile file);
     public void changeUserInfo(User target, Map<String, Object> userMap);
     public User getUserInfoByName(String name); //根据用户名获取用户信息
     public String resetHeadIconUrl(HttpServletRequest request, String headIcon);
+    boolean changePassword(String oldPassword, String newPassword, int uid);
 }
