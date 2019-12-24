@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-@Api(tags = "邮箱验证相关接口")
 @RestController
 @RequestMapping("/email")
 public class EmailController {
@@ -27,7 +25,6 @@ public class EmailController {
     @Autowired
     private IUserService userService;
 
-    @ApiOperation(value = "发送验证码")
     @PostMapping
     public ResponseEntity sendCheckCode(@RequestParam String to) {
         //1.查表

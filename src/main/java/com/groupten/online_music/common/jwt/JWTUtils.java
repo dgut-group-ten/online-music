@@ -45,7 +45,34 @@ public class JWTUtils {
 
         return token;
     }
+    /**
+     * 刷新token
+     * @return 返回token
+     */
+    public static String refreshToken(int uid, String name, boolean isAdmin, String web) {
+        //签发时间
+        Date niaData = new Date();
+        //过期时间-7天过期
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.DAY_OF_WEEK, 7);
+        Date expiresDate = now.getTime();
+        //设置jwt header
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("alg", "HS256");
+        map.put("typ", "JWT");
+        //生成token
+        String token = JWT.create()
+                .withHeader(map)
+                .withClaim("uid", uid)
+                .withClaim("name", name)
+                .withClaim("isAdmin", isAdmin)
+                .withClaim("web", web)
+                .withExpiresAt(expiresDate)//设置过期时间
+                .withIssuedAt(niaData)//设置签发时间
+                .sign(Algorithm.HMAC256(SECRET));//加密
 
+        return token;
+    }
     public static Map<String, Claim> verifyToken(String token){
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
         DecodedJWT jwt = null;
