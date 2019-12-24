@@ -1,5 +1,6 @@
 package com.groupten.online_music.web;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.groupten.online_music.common.jwt.JWTUtils;
 import com.groupten.online_music.common.utils.EncryptionUtil;
 import com.groupten.online_music.common.utils.FileUploadUtil;
@@ -57,6 +58,28 @@ public class UserController {
         //data.put("uid", uid);
         data.put("name", userMap.get("name"));
         return responseEntity.message(result ? "登录请求成功" : "不存在该用户或密码错误! 登录请求失败").data(data);
+    }
+
+    /**
+     * 刷新token
+     *
+     * @return 返回前端需要的数据
+     */
+    @PostMapping("/token/refresh")
+    @ResponseBody
+    public ResponseEntity loginRefresh(HttpServletRequest request) {
+        String token = request.getHeader("Token");
+        Map<String, Claim> claims = JWTUtils.verifyToken(token);
+        String tokenRefresh = JWTUtils.refreshToken(
+                claims.get("uid").asInt(),
+                claims.get("name").asString(),
+                claims.get("isAdmin").asBoolean(),
+                claims.get("web").asString()
+        );
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("Token", tokenRefresh);
+        return new ResponseEntity().message("token刷新成功！").data(data);
     }
 
     /**

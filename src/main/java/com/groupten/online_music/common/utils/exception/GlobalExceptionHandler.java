@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorInfo handleApplicationException(ApplicationException e) {
-        this.logger.info("------------全局捕获ApplicationException异常开始------------");
+        this.logger.info("------------全局n/捕获ApplicationException异常开始------------");
         ErrorInfo errorInfo = new ErrorInfo();
         errorInfo.setMsg(e.getMessage());
         errorInfo.setErrors(e.getCause());
