@@ -33,6 +33,10 @@ public class CommentController {
         String token = request.getHeader("Token");
         int uid = JWTUtils.verifyToken(token).get("uid").asInt();
         //1.封装数据到Comment实体中
+        //空评论不添加
+        if (commentMap.get("content") == null || commentMap.get("content").trim().equals("")) {
+            return new ResponseEntity().message("评论不能为空! ");
+        }
         Comment comment = new Comment(commentMap);
         //2.根据被评论对象与评论操作类型, 新建评论
         String repliedCommentId = commentMap.get("repliedCommentId");
