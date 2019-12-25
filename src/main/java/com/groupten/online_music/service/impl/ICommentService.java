@@ -18,4 +18,5 @@ public interface ICommentService {
     List<Comment> findSonCommentByPid(Integer pid, Map<String, String> commentMap);//分页查询子评论
     List<Comment> findSonCommentByPid(Integer pid, Integer offset, Integer size);//分页查询子评论
     Integer countByPid(Integer pid);//统计父评论下子评论数目
+    boolean isCorrectComment(Map<String, String> commentMap, StringBuffer message);
 }
