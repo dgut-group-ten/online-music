@@ -105,7 +105,7 @@ public class EmailService implements IEmailService {
     /**
      * 判断验证码是否过期
      *
-     * @param confirmTime 生成验证码的时间
+     * @param confirmTime 生成验证码的时间,15分钟有效
      * @return true or false
      */
     @Override
@@ -126,27 +126,12 @@ public class EmailService implements IEmailService {
      */
     @Override
     public boolean isCorrectCode(EmailConfirm emailConfirm, String checkCode, StringBuffer message) {
-        //判断有无该邮箱验证信息
-        if (emailConfirm == null) {
-            message.append("验证邮箱错误!");
-            System.out.println(message);
-            return false;
-        }
-        //判断用户输入是否未空
-        if (checkCode == null) {
-            message.append("验证码为空!");
-            System.out.println(message);
+        if(!isCorrectCode02(emailConfirm, checkCode, message)){
             return false;
         }
         //邮箱是否已认证
         if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
             message.append("邮箱已注册");
-            return false;
-        }
-        //判断验证码是否过期
-        if (!isNotExpiredTime(emailConfirm.getConfirmTime())) {
-            message.append("验证码已过期!请重新获取验证码");
-            System.out.println(message);
             return false;
         }
         //匹配验证码
@@ -159,7 +144,49 @@ public class EmailService implements IEmailService {
         message.append("验证码错误！请检查您的验证码！");
         return false;
     }
+    @Override
+    public boolean isForgotPasswordCorrectCode(EmailConfirm emailConfirm, String checkCode, StringBuffer message) {
+        if(!isCorrectCode02(emailConfirm, checkCode, message)){
+            return false;
+        }
+        //邮箱是否已认证
+        if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED) {
+            message.append("邮箱有效！");
+            return true;
+        }
+        //匹配验证码
+        if (checkCode.equals(emailConfirm.getCheckCode())) {
+            message.append("验证码正确！");
+            System.out.println(message);
+            return true;
+        }
 
+        message.append("验证码错误！请检查您的验证码！");
+        return false;
+    }
+
+    public boolean isCorrectCode02(EmailConfirm emailConfirm, String checkCode, StringBuffer message) {
+        //判断有无该邮箱验证信息
+        if (emailConfirm == null) {
+            message.append("验证邮箱错误!");
+            System.out.println(message);
+            return false;
+        }
+        //判断用户输入是否未空
+        if (checkCode == null) {
+            message.append("验证码为空!");
+            System.out.println(message);
+            return false;
+        }
+        //判断验证码是否过期
+        if (!isNotExpiredTime(emailConfirm.getConfirmTime())) {
+            message.append("验证码已过期!请重新获取验证码");
+            System.out.println(message);
+            return false;
+        }
+
+        return true;
+    }
     @Transactional
     public void delete(EmailConfirm emailConfirm) {
         emailDao.delete(emailConfirm);

@@ -19,6 +19,7 @@ public interface IEmailService {
     public boolean isNotExpiredTime(Date confirmTime);
     //校验验证码
     public boolean isCorrectCode(EmailConfirm emailConfirm, String checkCode, StringBuffer message);
+    public boolean isForgotPasswordCorrectCode(EmailConfirm emailConfirm, String checkCode, StringBuffer message);
     //删除用户认证信息
     void delete(EmailConfirm emailConfirm);
 }

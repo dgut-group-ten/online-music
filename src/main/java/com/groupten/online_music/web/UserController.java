@@ -10,6 +10,7 @@ import com.groupten.online_music.common.utils.exception.AuthenticationException;
 import com.groupten.online_music.entity.EmailConfirm;
 import com.groupten.online_music.entity.User;
 import com.groupten.online_music.entity.entityEnum.ConfirmStatus;
+import com.groupten.online_music.entity.entityEnum.UserStatus;
 import com.groupten.online_music.service.impl.IEmailService;
 import com.groupten.online_music.service.impl.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -236,12 +237,14 @@ public class UserController {
         EmailConfirm emailConfirm = emailService.findOne(newConfirmEmail);//新邮箱认证信息
         EmailConfirm oldEmailConfirm = emailService.findOne(user.getEmail());//旧邮箱认证信息
         //2.匹配验证码
-        if (emailService.isCorrectCode(emailConfirm, checkCode, message)) {
+        if (user.getStatus() == UserStatus.ENABLE && emailService.isCorrectCode(emailConfirm, checkCode, message)) {
             //2-1.匹配成功, 更换认证邮箱
+            if (oldEmailConfirm != null) {//解绑邮箱
+                oldEmailConfirm.setStatus(ConfirmStatus.UNCONFIRMED);
+                emailService.save(oldEmailConfirm);
+            }
             user.setEmail(newConfirmEmail);
             emailConfirm.setStatus(ConfirmStatus.CONFIRMED);
-            oldEmailConfirm.setStatus(ConfirmStatus.UNCONFIRMED);
-            emailService.save(oldEmailConfirm);
             emailService.save(emailConfirm);
             userService.save(user);
             message.append("认证邮箱修改成功! ");
@@ -272,7 +275,7 @@ public class UserController {
         if (user == null) throw new ApplicationException("无该用户! ");
         if (!user.getEmail().equals(email)) throw new ApplicationException("用户邮箱错误! ");
         EmailConfirm emailConfirm = emailService.findOne(email);
-        if (emailService.isCorrectCode(emailConfirm, checkCode, message)) {
+        if (emailService.isForgotPasswordCorrectCode(emailConfirm, checkCode, message)) {
             //匹配成功, 修改密码
             user.setPassword(EncryptionUtil.encryption(newPassword));
             if (userService.save(user) != null) message.append("密码已修改! ");
