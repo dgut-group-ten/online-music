@@ -37,6 +37,9 @@ public class CommentController {
         if (commentMap.get("content") == null || commentMap.get("content").trim().equals("")) {
             return new ResponseEntity().message("评论不能为空! ");
         }
+        if (commentMap.get("content").length() > 150) {
+            return new ResponseEntity().message("评论内容不超过150个字符! ");
+        }
         Comment comment = new Comment(commentMap);
         //2.根据被评论对象与评论操作类型, 新建评论
         String repliedCommentId = commentMap.get("repliedCommentId");
