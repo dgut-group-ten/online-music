@@ -32,14 +32,12 @@ public class CommentController {
         //用户登录验证
         String token = request.getHeader("Token");
         int uid = JWTUtils.verifyToken(token).get("uid").asInt();
+        //评论内容检查
+        StringBuffer message = new StringBuffer("");
+        if (commentService.isCorrectComment(commentMap, message)) {
+            return new ResponseEntity().message(message.toString());
+        }
         //1.封装数据到Comment实体中
-        //空评论不添加
-        if (commentMap.get("content") == null || commentMap.get("content").trim().equals("")) {
-            return new ResponseEntity().message("评论不能为空! ");
-        }
-        if (commentMap.get("content").length() > 150) {
-            return new ResponseEntity().message("评论内容不超过150个字符! ");
-        }
         Comment comment = new Comment(commentMap);
         //2.根据被评论对象与评论操作类型, 新建评论
         String repliedCommentId = commentMap.get("repliedCommentId");

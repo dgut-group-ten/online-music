@@ -156,4 +156,21 @@ public class CommentService implements ICommentService {
     public Integer countByPid(Integer pid) {
         return commentDao.countCommentByPid(pid);
     }
+
+    @Override
+    public boolean isCorrectComment(Map<String, String> commentMap, StringBuffer message) {
+        String content = commentMap.get("content");
+        //评论不为空
+        if (content == null || content.trim().equals("") || content.trim().equals("null")) {
+            message.append("评论不为空!");
+            return false;
+        }
+        //评论长度
+        if (commentMap.get("content").length() > 150) {
+            message.append("评论长度不超过150个字符!");
+            return false;
+        }
+
+        return true;
+    }
 }
