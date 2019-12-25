@@ -148,7 +148,7 @@ public class UserController {
         String token = request.getHeader("Token");
         int target_id = JWTUtils.verifyToken(token).get("uid").asInt();
         User user = userService.findById(target_id);
-        user.getUserInfo().setHeadIcon(userService.resetHeadIconUrl(request, user.getUserInfo().getHeadIcon()));
+        user.setHeadIcon(userService.resetHeadIconUrl(request, user.getHeadIcon()));
         user.setUserInfo(null);
         return new ResponseEntity().message("用户信息获取成功").data(user);
     }
