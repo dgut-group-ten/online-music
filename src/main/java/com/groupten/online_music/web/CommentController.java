@@ -34,7 +34,7 @@ public class CommentController {
         int uid = JWTUtils.verifyToken(token).get("uid").asInt();
         //评论内容检查
         StringBuffer message = new StringBuffer("");
-        if (commentService.isCorrectComment(commentMap, message)) {
+        if (!commentService.isCorrectComment(commentMap, message)) {
             return new ResponseEntity().message(message.toString());
         }
         //1.封装数据到Comment实体中
