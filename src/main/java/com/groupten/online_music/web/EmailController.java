@@ -9,10 +9,7 @@ import com.groupten.online_music.service.impl.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -47,6 +44,30 @@ public class EmailController {
             emailService.save(emailConfirm);
             emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
             message += "已发送验证码，请打开邮箱确认";
+        } else {
+            message += "验证码已发送，60秒后才可重发验证码";
+        }
+
+        return new ResponseEntity().message(message);
+    }
+
+    @GetMapping
+    public ResponseEntity sendForgotPasswordCheckCode(@RequestParam String to) {
+        //1.查表
+        EmailConfirm emailConfirm = emailService.findOne(to);
+        //2.发送邮件
+        String message = "";
+        String checkCode = emailService.generateCheckCode();//生成验证码
+        if (emailConfirm == null) {
+            //2-1.邮箱不存在
+            throw new ApplicationException("邮箱未注册，请检查邮箱！");
+        } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED && emailService.isLimitedTime(emailConfirm.getConfirmTime())) {
+            //2-2.邮箱存在, 已认证则发送并判断发送间隔, 更新验证信息
+            emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
+            emailConfirm.setConfirmTime(new Date());
+            emailConfirm.setCheckCode(checkCode);
+            emailService.save(emailConfirm);
+            message += "验证码已发送至您的邮箱！";
         } else {
             message += "验证码已发送，60秒后才可重发验证码";
         }
