@@ -51,7 +51,7 @@ public class EmailController {
         return new ResponseEntity().message(message);
     }
 
-    @GetMapping
+    @PutMapping
     public ResponseEntity sendForgotPasswordCheckCode(@RequestParam String to) {
         //1.查表
         EmailConfirm emailConfirm = emailService.findOne(to);
