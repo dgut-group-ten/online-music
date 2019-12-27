@@ -58,10 +58,10 @@ public class EmailController {
         //2.发送邮件
         String message = "";
         String checkCode = emailService.generateCheckCode();//生成验证码
-        if (emailConfirm == null) {
+        if (emailConfirm == null || emailConfirm.getStatus() == ConfirmStatus.UNCONFIRMED) {
             //2-1.邮箱不存在
             throw new ApplicationException("邮箱未注册，请检查邮箱！");
-        } else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED && emailService.isLimitedTime(emailConfirm.getConfirmTime())) {
+        }else if (emailConfirm.getStatus() == ConfirmStatus.CONFIRMED && emailService.isLimitedTime(emailConfirm.getConfirmTime())) {
             //2-2.邮箱存在, 已认证则发送并判断发送间隔, 更新验证信息
             emailService.sendSimpleMail(to, title, "验证码: " + checkCode);
             emailConfirm.setConfirmTime(new Date());
